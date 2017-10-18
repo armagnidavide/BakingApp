@@ -17,7 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
- 
+    //to have access to Data-Binding-Library that help us to Replace
+    // all findViewById codes with a single line of code to have a cleaner and more elegant style
+    dataBinding {
+        enabled true
+    }
 }
 
 dependencies {
@@ -27,6 +31,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    //adding Picasso dependency to download images and caching
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 
 }
