@@ -1,13 +1,13 @@
 package com.example.android.bakingapp;
 
 
-public class RecipeStep {
+public class Step {
     private  int id;
     private  String shortDescription;
     private  String description;
     private  String videoURL;
     private  String thumbnailURL;
-    public RecipeStep(){
+    public Step(){
     }
 
     public int getId() {

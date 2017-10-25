@@ -3,7 +3,10 @@
     package="com.example.android.bakingapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:glEsVersion="0x00010001" android:required="true" />
+
+    <uses-feature
+        android:glEsVersion="0x00010001"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -20,13 +23,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectRecipeStepActivity" />
-        <activity android:name=".RecipeStepDetailActivity"
-            android:parentActivityName=".SelectRecipeStepActivity"
-            >
+        <activity
+            android:name=".RecipeStepDetailActivity"
+            android:parentActivityName=".SelectRecipeStepActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.bakingapp.SelectRecipeStepActivity" />
         </activity>
+
+        <provider
+            android:name=".sql.Provider"
+            android:authorities="com.example.android.bakingapp"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

@@ -6,8 +6,27 @@ public class Recipe {
 
     private int id;
     private String name;
-    private ArrayList<RecipeIngredient> ingredients;
-    private ArrayList<RecipeStep> recipeSteps;
+    private ArrayList<Ingredient> ingredients;
+
+    public int getIngredientsNumber() {
+        return ingredientsNumber;
+    }
+
+    public void setIngredientsNumber(int ingredientsNumber) {
+        this.ingredientsNumber = ingredientsNumber;
+    }
+
+    public int getStepsNumber() {
+        return stepsNumber;
+    }
+
+    public void setStepsNumber(int stepsNumber) {
+        this.stepsNumber = stepsNumber;
+    }
+
+    private int ingredientsNumber;
+    private int stepsNumber;
+    private ArrayList<Step> steps;
     private int servings;
     private String thumbnail;
 
@@ -30,20 +49,20 @@ public class Recipe {
         this.name = name;
     }
 
-    public ArrayList<RecipeIngredient> getIngredients() {
+    public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<RecipeIngredient> ingredients) {
+    public void setIngredients(ArrayList<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public ArrayList<RecipeStep> getRecipeSteps() {
-        return recipeSteps;
+    public ArrayList<Step> getSteps() {
+        return steps;
     }
 
-    public void setRecipeSteps(ArrayList<RecipeStep> recipeSteps) {
-        this.recipeSteps = recipeSteps;
+    public void setSteps(ArrayList<Step> steps) {
+        this.steps = steps;
     }
 
     public int getServings() {

@@ -46,10 +46,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
         //Setting text view title
         customViewHolder.txtVwRecipeName.setText(recipe.getName());
-        //Setting text view steps number
-        customViewHolder.txtVwRecipeStepsNumber.setText(recipe.getRecipeSteps().size() + "");
         //Setting text view ingredients number
-        customViewHolder.txtVwRecipeIngredientsNumber.setText(recipe.getIngredients().size() + "");
+        customViewHolder.txtVwRecipeIngredientsNumber.setText(String.valueOf(recipe.getIngredientsNumber()));
+        //Setting text view steps number
+        customViewHolder.txtVwRecipeStepsNumber.setText(String.valueOf(recipe.getStepsNumber()));
+        //Setting text view steps number
+        customViewHolder.txtVwRecipeServing.setText(String.valueOf(recipe.getServings()));
     }
 
     @Override
@@ -60,8 +62,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imgVwRecipeImage;
         TextView txtVwRecipeName;
-        TextView txtVwRecipeStepsNumber;
         TextView txtVwRecipeIngredientsNumber;
+        TextView txtVwRecipeStepsNumber;
+        TextView txtVwRecipeServing;
 
 
         CustomViewHolder(View view) {
@@ -69,17 +72,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             view.setOnClickListener(this);
             this.imgVwRecipeImage = (ImageView) view.findViewById(R.id.imgVw_recipe_image);
             this.txtVwRecipeName = (TextView) view.findViewById(R.id.txtVw_recipe_name);
-            this.txtVwRecipeStepsNumber = (TextView) view.findViewById(R.id.txtVw_recipe_steps_number);
             this.txtVwRecipeIngredientsNumber = (TextView) view.findViewById(R.id.txtVw_recipe_ingredients_number);
+            this.txtVwRecipeStepsNumber = (TextView) view.findViewById(R.id.txtVw_recipe_steps_number);
+            this.txtVwRecipeServing = (TextView) view.findViewById(R.id.txtVw_recipe_serving);
+
         }
 
         @Override
         public void onClick(View view) {
             Recipe recipe = recipeList.get(getAdapterPosition());
             Intent intent = new Intent(mContext, SelectRecipeStepActivity.class);
+            intent.putExtra("recipeId", recipe.getId());
             intent.putExtra("name", recipe.getName());
-            intent.putExtra("recipeSteps", recipe.getRecipeSteps().size());
-            intent.putExtra("recipeIngredients", recipe.getIngredients().size());
+            intent.putExtra("recipeServing", recipe.getServings());
+
             mContext.startActivity(intent);
         }
     }

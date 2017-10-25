@@ -2,10 +2,10 @@ package com.example.android.bakingapp;
 
 
 
-public class RecipeIngredient {
+public class Ingredient {
     private  int quantity;
     private  String measure;
-    private  String ingredient;
+    private  String name;
 
     public int getQuantity() {
         return quantity;
@@ -23,14 +23,14 @@ public class RecipeIngredient {
         this.measure = measure;
     }
 
-    public String getIngredient() {
-        return ingredient;
+    public String getName() {
+        return name;
     }
 
-    public void setIngredient(String ingredient) {
-        this.ingredient = ingredient;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public RecipeIngredient(){
+    public Ingredient(){
     }
 }
