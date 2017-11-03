@@ -1,11 +1,13 @@
 package com.example.android.bakingapp;
 
 
-
 public class Ingredient {
-    private  int quantity;
-    private  String measure;
-    private  String name;
+    private int quantity;
+    private String measure;
+    private String name;
+
+    public Ingredient() {
+    }
 
     public int getQuantity() {
         return quantity;
@@ -29,8 +31,5 @@ public class Ingredient {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Ingredient(){
     }
 }

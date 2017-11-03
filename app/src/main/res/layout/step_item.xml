@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/imgVw_recipe_step_image"
@@ -10,7 +10,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/txtVw_recipe_step_id"
+        android:id="@+id/txtVw_recipe_step_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
@@ -22,4 +22,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_margin="@dimen/text_margin"
+        android:background="@android:color/black" />
 </LinearLayout>

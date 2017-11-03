@@ -7,6 +7,13 @@ public class Recipe {
     private int id;
     private String name;
     private ArrayList<Ingredient> ingredients;
+    private int ingredientsNumber;
+    private int stepsNumber;
+    private ArrayList<Step> steps;
+    private int servings;
+    private String thumbnail;
+    public Recipe() {
+    }
 
     public int getIngredientsNumber() {
         return ingredientsNumber;
@@ -22,15 +29,6 @@ public class Recipe {
 
     public void setStepsNumber(int stepsNumber) {
         this.stepsNumber = stepsNumber;
-    }
-
-    private int ingredientsNumber;
-    private int stepsNumber;
-    private ArrayList<Step> steps;
-    private int servings;
-    private String thumbnail;
-
-    public Recipe() {
     }
 
     public int getId() {

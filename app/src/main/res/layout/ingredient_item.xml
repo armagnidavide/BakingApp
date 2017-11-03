@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--This TextView contains the name of the ingredient-->
+    <TextView
+        android:id="@+id/txtVw_ingredient_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <!--This TextView contains the quantity -->
+    <TextView
+        android:id="@+id/txtVw_ingredient_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!--This TextView contains the unit of measure-->
+    <TextView
+        android:id="@+id/txtVw_recipe_ingredient_measure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

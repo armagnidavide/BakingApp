@@ -34,19 +34,48 @@ import java.util.List;
 public class SelectRecipeActivity extends AppCompatActivity {
 
 
-    ActivitySelectRecipeBinding binding;
     private static final String TAG = "RecyclerViewExample";
-    private List<Recipe> recipes;
-    private MyRecyclerViewAdapter adapter;
     private static final String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    ActivitySelectRecipeBinding binding;
+    private List<Recipe> recipes;
+    private RecipesAdapter adapter;
 
+    /**
+     * public static String strSeparator = "__,__";
+     * <p>
+     * public static String convertArrayToString(String[] array) {
+     * String str = "";
+     * for (int i = 0; i < array.length; i++) {
+     * str = str + array[i];
+     * // Do not append comma at the end of last element
+     * if (i < array.length - 1) {
+     * str = str + strSeparator;
+     * }
+     * }
+     * return str;
+     * }
+     * <p>
+     * public static String[] convertStringToArray(String str) {
+     * String[] arr = str.split(strSeparator);
+     * return arr;
+     * }
+     **/
+    public static Uri insert(Context context, ContentResolver resolver,
+                             Uri uri, ContentValues values) {
+        try {
+            return resolver.insert(uri, values);
+        } catch (SQLiteException e) {
+            Log.e(TAG, "Catch a SQLiteException when insert: ", e);
+            return null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_recipe);
         setLayoutManager();
-        adapter = new MyRecyclerViewAdapter(SelectRecipeActivity.this, null);
+        adapter = new RecipesAdapter(SelectRecipeActivity.this, null);
         binding.recyclerView.setAdapter(adapter);
         if (!databaseContainsData()) {
             new DownloadTask().execute(RECIPE_URL);
@@ -67,56 +96,6 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
-    public class DownloadTask extends AsyncTask<String, Void, Integer> {
-
-        @Override
-        protected void onPreExecute() {
-            binding.progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            Integer result = 0;
-            HttpURLConnection urlConnection;
-            try {
-                URL url = new URL(params[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                int statusCode = urlConnection.getResponseCode();
-
-                // 200 represents HTTP OK
-                if (statusCode == 200) {
-                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = r.readLine()) != null) {
-                        response.append(line);
-                    }
-                    parseResult(response.toString());
-                    result = 1; // Successful
-                } else {
-                    result = 0; //"Failed to fetch data!";
-                }
-            } catch (Exception e) {
-                Log.d(TAG, e.getLocalizedMessage());
-            }
-            return result; //"Failed to fetch data!";
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            binding.progressBar.setVisibility(View.GONE);
-
-            if (result == 1) {
-                putRecipesIntoDb();
-                adapter = new MyRecyclerViewAdapter(SelectRecipeActivity.this, recipes);
-                binding.recyclerView.setAdapter(adapter);
-            } else {
-                Toast.makeText(SelectRecipeActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-
     private boolean databaseContainsData() {
         boolean containsRecipes;
         Cursor cursor = getApplicationContext().getContentResolver()
@@ -126,7 +105,6 @@ public class SelectRecipeActivity extends AppCompatActivity {
                         null,
                         null);
         containsRecipes = cursor.getCount() > 0;
-        Log.e(TAG, "DATABASE  CONTAINS " + cursor.getCount());
         cursor.close();
         return containsRecipes;
     }
@@ -231,10 +209,10 @@ public class SelectRecipeActivity extends AppCompatActivity {
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient currentIngredient = ingredients.get(i);
             ContentValues cv = new ContentValues();
-            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENTS_RECIPE_ID, recipeId);
-            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENTS_NAME, currentIngredient.getName());
-            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENTS_QUANTITY, currentIngredient.getQuantity());
-            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENTS_MEASURE, currentIngredient.getMeasure());
+            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID, recipeId);
+            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_NAME, currentIngredient.getName());
+            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_QUANTITY, currentIngredient.getQuantity());
+            cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_MEASURE, currentIngredient.getMeasure());
             insert(this, getContentResolver(), Contracts.IngredientsEntry.CONTENT_URI, cv);
 
         }
@@ -253,37 +231,6 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * public static String strSeparator = "__,__";
-     * <p>
-     * public static String convertArrayToString(String[] array) {
-     * String str = "";
-     * for (int i = 0; i < array.length; i++) {
-     * str = str + array[i];
-     * // Do not append comma at the end of last element
-     * if (i < array.length - 1) {
-     * str = str + strSeparator;
-     * }
-     * }
-     * return str;
-     * }
-     * <p>
-     * public static String[] convertStringToArray(String str) {
-     * String[] arr = str.split(strSeparator);
-     * return arr;
-     * }
-     **/
-    public static Uri insert(Context context, ContentResolver resolver,
-                             Uri uri, ContentValues values) {
-        try {
-            return resolver.insert(uri, values);
-        } catch (SQLiteException e) {
-            Log.e(TAG, "Catch a SQLiteException when insert: ", e);
-            return null;
-        }
-    }
-
     private void displayRecipesFromDb() {
         recipes = new ArrayList<Recipe>();
         Cursor cursor = getApplicationContext().getContentResolver()
@@ -296,7 +243,7 @@ public class SelectRecipeActivity extends AppCompatActivity {
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 Recipe recipe = new Recipe();
-                int recipeId=cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry._ID));
+                int recipeId = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry._ID));
                 String name = cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_NAME));
                 int ingredientsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_INGREDIENTS));
                 int stepsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_STEPS));
@@ -309,13 +256,63 @@ public class SelectRecipeActivity extends AppCompatActivity {
                 recipe.setServings(servings);
                 recipe.setImage(thumbnail);
                 recipes.add(recipe);
+                cursor.moveToNext();
             }
             cursor.close();
-            adapter = new MyRecyclerViewAdapter(SelectRecipeActivity.this, recipes);
+            adapter = new RecipesAdapter(SelectRecipeActivity.this, recipes);
             binding.progressBar.setVisibility(View.INVISIBLE);
             binding.recyclerView.setAdapter(adapter);
         }
 
+    }
+
+    public class DownloadTask extends AsyncTask<String, Void, Integer> {
+
+        @Override
+        protected void onPreExecute() {
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            Integer result = 0;
+            HttpURLConnection urlConnection;
+            try {
+                URL url = new URL(params[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                int statusCode = urlConnection.getResponseCode();
+
+                // 200 represents HTTP OK
+                if (statusCode == 200) {
+                    BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        response.append(line);
+                    }
+                    parseResult(response.toString());
+                    result = 1; // Successful
+                } else {
+                    result = 0; //"Failed to fetch data!";
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getLocalizedMessage());
+            }
+            return result; //"Failed to fetch data!";
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            binding.progressBar.setVisibility(View.GONE);
+
+            if (result == 1) {
+                putRecipesIntoDb();
+                adapter = new RecipesAdapter(SelectRecipeActivity.this, recipes);
+                binding.recyclerView.setAdapter(adapter);
+            } else {
+                Toast.makeText(SelectRecipeActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 

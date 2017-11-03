@@ -22,7 +22,7 @@ public class Contracts {
     public static final String PATH_STEPS = "steps";
 
     /**
-     * Inner class that defines the table contents of the Recipes table.
+     * Inner class that defines the table contents of the Recipes-table.
      */
     public static final class RecipesEntry implements BaseColumns {
 
@@ -46,23 +46,23 @@ public class Contracts {
                         "/" + PATH_RECIPES;
 
         // Helper method.
-        public static Uri buildRecipesUri(long id) {
+        public static Uri buildRecipeUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
     }
 
     /**
-     * Inner class that defines the table contents of the Ingredients table.
+     * Inner class that defines the table contents of the Ingredients-table.
      */
     public static final class IngredientsEntry implements BaseColumns {
 
         public static final String TABLE_NAME = "ingredients";
 
-        public static final String COLUMN_INGREDIENTS_RECIPE_ID = "recipe_id";
-        public static final String COLUMN_INGREDIENTS_NAME = "name";
-        public static final String COLUMN_INGREDIENTS_QUANTITY = "quantity";
-        public static final String COLUMN_INGREDIENTS_MEASURE = "measure";
+        public static final String COLUMN_INGREDIENT_RECIPE_ID = "recipe_id";
+        public static final String COLUMN_INGREDIENT_NAME = "name";
+        public static final String COLUMN_INGREDIENT_QUANTITY = "quantity";
+        public static final String COLUMN_INGREDIENT_MEASURE = "measure";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_INGREDIENTS).build();
@@ -76,14 +76,14 @@ public class Contracts {
                         "/" + PATH_INGREDIENTS;
 
         // Helper method.
-        public static Uri buildRecipesUri(long id) {
+        public static Uri buildIngredientUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
     }
 
     /**
-     * Inner class that defines the table contents of the Steps table.
+     * Inner class that defines the table contents of the Steps-table.
      */
     public static final class StepsEntry implements BaseColumns {
 
@@ -107,7 +107,7 @@ public class Contracts {
                         "/" + PATH_STEPS;
 
         // Helper method.
-        public static Uri buildRecipesUri(long id) {
+        public static Uri buildStepUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

@@ -22,13 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectRecipeStepActivity" />
+        <activity android:name=".SelectStepActivity" />
         <activity
-            android:name=".RecipeStepDetailActivity"
-            android:parentActivityName=".SelectRecipeStepActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.bakingapp.SelectRecipeStepActivity" />
+            android:name=".StepDetailActivity">
         </activity>
 
         <provider

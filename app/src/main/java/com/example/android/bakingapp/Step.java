@@ -2,12 +2,13 @@ package com.example.android.bakingapp;
 
 
 public class Step {
-    private  int id;
-    private  String shortDescription;
-    private  String description;
-    private  String videoURL;
-    private  String thumbnailURL;
-    public Step(){
+    private int id;
+    private String shortDescription;
+    private String description;
+    private String videoURL;
+    private String thumbnailURL;
+
+    public Step() {
     }
 
     public int getId() {
@@ -49,7 +50,6 @@ public class Step {
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
-
 
 
 }

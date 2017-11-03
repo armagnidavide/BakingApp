@@ -15,13 +15,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.CustomViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.CustomViewHolder> {
     private List<Recipe> recipeList;
     private Context mContext;
-    private static String TAG = "MyRecyclerViewAdapter";
 
 
-    public MyRecyclerViewAdapter(Context context, List<Recipe> recipeList) {
+    public RecipesAdapter(Context context, List<Recipe> recipeList) {
         this.recipeList = recipeList;
         this.mContext = context;
     }
@@ -81,10 +80,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         @Override
         public void onClick(View view) {
             Recipe recipe = recipeList.get(getAdapterPosition());
-            Intent intent = new Intent(mContext, SelectRecipeStepActivity.class);
-            intent.putExtra("recipeId", recipe.getId());
-            intent.putExtra("name", recipe.getName());
-            intent.putExtra("recipeServing", recipe.getServings());
+            Intent intent = new Intent(mContext, SelectStepActivity.class);
+            intent.putExtra(SelectStepActivity.RECIPE_ID, recipe.getId());
+            intent.putExtra(SelectStepActivity.RECIPE_NAME, recipe.getName());
+            intent.putExtra(SelectStepActivity.RECIPE_SERVING, recipe.getServings());
 
             mContext.startActivity(intent);
         }
