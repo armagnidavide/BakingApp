@@ -4,4 +4,19 @@
     <string name="title_item_detail">Item Detail</string>
     <string name="recipe_image">image of the recipe</string>
     <string name="ingredients">btn_ingredients</string>
+    <string name="appwidget_title">BAKING APP</string>
+    <string name="add_widget">Add widget</string>
+    <string name="ingredient_name_label">name</string>
+    <string name="ingredient_quantity_label">quantity</string>
+    <string name="ingredient_measure_label">measure</string>
+    <string name="appwidget_recipe_label">Recipe :</string>
+    <string name="appwidget_ingredients_number_label">Ingredients :</string>
+    <string name="appwidget_steps_number_label">Steps :</string>
+    <string name="btn_appwidget_previous">previous</string>
+    <string name="btn_appwidget_next">next</string>
+    <string name="appwidget_small_image_content_description">recipe image</string>
+    <string name="appwidget_grid_ingredients_not_available">Ingredients not available</string>
+    <string name="appwidget_grid_recipe_image">recipe image</string>
+    <string name="content_description_step_image">content_description_step_image</string>
+    <string name="appwidget_recipe_image_content_description">recipe image</string>
 </resources>

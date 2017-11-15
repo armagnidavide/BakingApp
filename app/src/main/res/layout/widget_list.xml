@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       >
+        <Button
+            android:id="@+id/btn_appwidget_previous"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_appwidget_previous"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/btn_appwidget_next"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_appwidget_next"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lnrLyt_for_pendingIntent"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/appwidget_recipe_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="8dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_marginStart="36dp" />
+        <ImageView
+            android:id="@+id/appwidget_recipe_image"
+            android:layout_toEndOf="@+id/appwidget_recipe_name"
+            android:layout_margin="8dp"
+            android:layout_marginStart="64dp"
+            android:layout_centerVertical="true"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/appwidget_recipe_image_content_description"/>
+    </RelativeLayout>
+    
+    <ListView
+        android:id="@+id/widget_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        />
+    <LinearLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#09C"
+        android:padding="@dimen/widget_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="#09C"
+            android:text="@string/appwidget_grid_ingredients_not_available"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            android:textStyle="bold|italic" />
+        <ImageView
+            android:layout_margin="8dp"
+            android:id="@+id/widget_recipe_placeholder_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/recipe_placeholder"
+            android:contentDescription="@string/appwidget_grid_recipe_image"/>
+    </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

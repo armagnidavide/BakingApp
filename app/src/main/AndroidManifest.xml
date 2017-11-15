@@ -23,15 +23,34 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectStepActivity" />
-        <activity
-            android:name=".StepDetailActivity">
-        </activity>
+        <activity android:name=".StepDetailActivity" />
 
         <provider
             android:name=".sql.Provider"
             android:authorities="com.example.android.bakingapp"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+<!--The <receiver> element requires the android:name attribute, which specifies the AppWidgetProvider used by the App Widget-->
+        <receiver android:name=".RecipeWidgetProvider">
+            <!--The <intent-filter> element must include an <action> element with the android:name attribute.
+            This attribute specifies that the AppWidgetProvider accepts the ACTION_APPWIDGET_UPDATE broadcast.
+             This is the only broadcast that you must explicitly declare-->
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <!--The <meta-data> element specifies the AppWidgetProviderInfo resource-->
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
+
+        <service
+            android:name=".IngredientIntentService"
+            android:exported="false" />
+        <service
+            android:name=".ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>

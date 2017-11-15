@@ -21,7 +21,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
 
     public static final String INGREDIENT_RECIPE_ID = "recipe_id";
     private static final int LOADER_INGREDIENTS = 2;
-    private static final String RECIPE_ID="recipe_id";
+    private static final String RECIPE_ID = "recipe_id";
     private RecyclerView ingredientRecyclerView;
     private int recipeId;
 
@@ -50,7 +50,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
 
     private void getDataFromBundle(Bundle arguments) {
         if (arguments.containsKey(INGREDIENT_RECIPE_ID)) {
-            recipeId=arguments.getInt(INGREDIENT_RECIPE_ID);
+            recipeId = arguments.getInt(INGREDIENT_RECIPE_ID);
         }
     }
 
@@ -71,7 +71,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_INGREDIENTS) {
-            return new CursorLoader(getContext(), ContentUris.withAppendedId(Contracts.IngredientsEntry.CONTENT_URI,recipeId),
+            return new CursorLoader(getContext(), ContentUris.withAppendedId(Contracts.IngredientsEntry.CONTENT_URI, recipeId),
                     null,
                     null,
                     null,

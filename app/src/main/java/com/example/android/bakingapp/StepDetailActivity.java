@@ -12,13 +12,13 @@ import android.support.v7.app.AppCompatActivity;
  * in a {@link .....}.
  */
 public class StepDetailActivity extends AppCompatActivity {
+    public static final String FRAGMENT_TYPE = "fragment_type";
+    public static final int FRAGMENT_STEP = 0;
+    public static final int FRAGMENT_INGREDIENT = 1;
     private String stepDescription;
     private String stepVideoURL;
     private String stepImageURL;
     private int recipeId;
-    public static final String FRAGMENT_TYPE = "fragment_type";
-    public static final int FRAGMENT_STEP = 0;
-    public static final int FRAGMENT_INGREDIENT = 1;
     private int fragmentType;
 
     @Override
@@ -59,10 +59,8 @@ public class StepDetailActivity extends AppCompatActivity {
     }
 
 
-
-
     private void getDataFromIntent(Intent intent) {
-        if (intent.getIntExtra(FRAGMENT_TYPE,-1)==FRAGMENT_STEP) {
+        if (intent.getIntExtra(FRAGMENT_TYPE, -1) == FRAGMENT_STEP) {
             stepDescription = intent.getStringExtra(StepDetailFragment.STEP_DESCRIPTION);
             stepVideoURL = intent.getStringExtra(StepDetailFragment.STEP_VIDEO_URL);
             stepImageURL = intent.getStringExtra(StepDetailFragment.STEP_IMAGE_URL);

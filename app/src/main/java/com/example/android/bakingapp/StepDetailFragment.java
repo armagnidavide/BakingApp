@@ -5,9 +5,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -26,6 +28,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 
 public class StepDetailFragment extends Fragment {
@@ -40,12 +43,12 @@ public class StepDetailFragment extends Fragment {
     private TextView txtVwStepDescription;
     private TextView txtVwStepVideo;
     private TextView txtVwStepImage;
+    private ImageView imgVwStepImage;
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer simpleExoPlayer;
     private String stepDescription;
     private String stepVideoURL;
     private String stepImageURL;
-
 
 
     /**
@@ -80,45 +83,53 @@ public class StepDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_step_detail_, container, false);
         initializations(rootView);
-        simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(),R.drawable.recipe_placeholder));
+        simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.recipe_placeholder));
         if (stepDescription != null) {
             txtVwStepDescription.setText(stepDescription);
         }
-        if (stepVideoURL != null&&!stepVideoURL.equals("")) {
+        if (stepVideoURL != null && !stepVideoURL.equals("")) {
             initializePlayer();
             txtVwStepVideo.setText(stepVideoURL);
-        }else{
+        } else {
             simpleExoPlayerView.setVisibility(View.GONE);
         }
         if (stepImageURL != null) {
             txtVwStepImage.setText(stepImageURL);
+            //Render image using Picasso library
+            if (!TextUtils.isEmpty(stepImageURL)) {
+                Picasso.with(this.getContext()).load(stepImageURL)
+                        .error(R.drawable.recipe_placeholder)
+                        .placeholder(R.drawable.recipe_placeholder)
+                        .into(imgVwStepImage);
+            } else {
+                imgVwStepImage.setImageDrawable(getResources().getDrawable(R.drawable.recipe_placeholder));
+            }
         }
-
-
 
 
         return rootView;
     }
 
     private void initializePlayer() {
-        if(simpleExoPlayer==null){
+        if (simpleExoPlayer == null) {
             creatingThePlayer();
             attachingPlayerToTheView();
             preparingThePlayer();
-            }
         }
+    }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (stepVideoURL != null&&!stepVideoURL.equals("")) {
-        releaseThePlayer();}
+        if (stepVideoURL != null && !stepVideoURL.equals("")) {
+            releaseThePlayer();
+        }
     }
 
     private void releaseThePlayer() {
         simpleExoPlayer.stop();
         simpleExoPlayer.release();
-        simpleExoPlayer=null;
+        simpleExoPlayer = null;
     }
 
     private void preparingThePlayer() {
@@ -158,11 +169,11 @@ public class StepDetailFragment extends Fragment {
     }
 
 
-
     private void initializations(View rootView) {
-         simpleExoPlayerView=(SimpleExoPlayerView)rootView.findViewById(R.id.simpleExoPlayerView);
+        simpleExoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
         txtVwStepDescription = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_description);
         txtVwStepVideo = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_videoURL);
+        imgVwStepImage=(ImageView)rootView.findViewById(R.id.imgVw_recipe_step_image);
         txtVwStepImage = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_imageURL);
     }
 }

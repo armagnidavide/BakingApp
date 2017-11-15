@@ -13,7 +13,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     private List<Ingredient> ingredientList;
 
 
-    public IngredientsAdapter( List<Ingredient> ingredientList) {
+    public IngredientsAdapter(List<Ingredient> ingredientList) {
         this.ingredientList = ingredientList;
     }
 

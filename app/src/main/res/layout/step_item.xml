@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <ImageView
+        android:layout_gravity="center"
         android:id="@+id/imgVw_recipe_step_image"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_step_image"/>
 
     <TextView
+        android:layout_gravity="center"
         android:id="@+id/txtVw_recipe_step_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,6 +20,7 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
+        android:layout_gravity="center"
         android:id="@+id/txtVw_recipe_step_short_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +28,7 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <View
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_margin="@dimen/text_margin"

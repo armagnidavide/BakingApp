@@ -12,6 +12,8 @@ public class Recipe {
     private ArrayList<Step> steps;
     private int servings;
     private String thumbnail;
+    private long lastTimeUsed;
+
     public Recipe() {
     }
 
@@ -80,5 +82,12 @@ public class Recipe {
     }
 
 
+    public long getLastTimeUsed() {
+        return lastTimeUsed;
+    }
+
+    public void setLastTimeUsed(long lastTimeUsed) {
+        this.lastTimeUsed = lastTimeUsed;
+    }
 }
 

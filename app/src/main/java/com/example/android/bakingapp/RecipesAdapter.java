@@ -81,9 +81,11 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.CustomVi
         public void onClick(View view) {
             Recipe recipe = recipeList.get(getAdapterPosition());
             Intent intent = new Intent(mContext, SelectStepActivity.class);
+            intent.setAction(SelectStepActivity.ACTION_GET_RECIPE_DATA_FROM_THIS_INTENT);
             intent.putExtra(SelectStepActivity.RECIPE_ID, recipe.getId());
             intent.putExtra(SelectStepActivity.RECIPE_NAME, recipe.getName());
             intent.putExtra(SelectStepActivity.RECIPE_SERVING, recipe.getServings());
+            intent.putExtra(SelectStepActivity.RECIPE_LAST_TIME_USED, recipe.getLastTimeUsed());
 
             mContext.startActivity(intent);
         }

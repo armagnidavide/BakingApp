@@ -11,17 +11,21 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-    /**mSelectionClause = UserDictionary.Words.WORD + " = ?";
 
-            // Moves the user's input string to the selection arguments.
-            mSelectionArgs[0] = mSearchString;*/
+/**
+ * mSelectionClause = UserDictionary.Words.WORD + " = ?";
+ * <p>
+ * // Moves the user's input string to the selection arguments.
+ * mSelectionArgs[0] = mSearchString;
+ */
 @SuppressWarnings("ConstantConditions")
 public class Provider extends android.content.ContentProvider {
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private static final int RECIPES = 1;
-    private final static int RECIPE_ID = 2;
-    private static final int INGREDIENTS = 3;
-    private final static int INGREDIENT_RECIPE_ID = 4;
+    //Values for the UriMatcher
+    private static final int RECIPES = 1;// all the recipes
+    private final static int RECIPE_ID = 2;//a specfic recipe
+    private static final int INGREDIENTS = 3;//all the ingredients
+    private final static int INGREDIENT_RECIPE_ID = 4;//an ingredient of a specific re
     private static final int STEPS = 5;
     private final static int STEP_RECIPE_ID = 6;
 
@@ -46,7 +50,7 @@ public class Provider extends android.content.ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri  uri, String selection, String[] selectionArgs) {
         int uriType = uriMatcher.match(uri);
         SQLiteDatabase recipeDb;
         Context context = getContext();
@@ -86,15 +90,15 @@ public class Provider extends android.content.ContentProvider {
                 }
                 break;
             case INGREDIENT_RECIPE_ID:
-                selection=Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID+ " = ?";
-                selectionArgs[0]=uri.getLastPathSegment();
-                    rowsDeleted = recipeDb.delete(Contracts.IngredientsEntry.TABLE_NAME,
-                            selection,
-                            selectionArgs);
+                selection = Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID + " = ?";
+                selectionArgs[0] = uri.getLastPathSegment();
+                rowsDeleted = recipeDb.delete(Contracts.IngredientsEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
                 break;
             case STEP_RECIPE_ID:
-                selection=Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID+ " = ?";
-                selectionArgs[0]=uri.getLastPathSegment();
+                selection = Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID + " = ?";
+                selectionArgs[0] = uri.getLastPathSegment();
                 rowsDeleted = recipeDb.delete(Contracts.StepsEntry.TABLE_NAME,
                         selection,
                         selectionArgs);
@@ -102,10 +106,11 @@ public class Provider extends android.content.ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+        //Notify registered observers that a row was updated and attempt to sync changes to the network.
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsDeleted;
     }
-
+    //to handle requests for the MIME type of the data at the given URI.
     @Override
     public String getType(@NonNull Uri uri) {
         switch (uriMatcher.match(uri)) {
@@ -167,16 +172,15 @@ public class Provider extends android.content.ContentProvider {
         }
     }
 
+    /**
+     * Create a writable database which will trigger its
+     * creation if it doesn't already exist.
+     */
     @Override
     public boolean onCreate() {
         Context context = getContext();
         SQLiteDatabase recipeDb;
         RecipeDb recipeDbHelper = new RecipeDb(context);
-
-        /*
-         * Create a writable database which will trigger its
-         * creation if it doesn't already exist.
-         */
         recipeDb = recipeDbHelper.getWritableDatabase();
         return recipeDb != null;
     }
@@ -190,40 +194,32 @@ public class Provider extends android.content.ContentProvider {
         recipeDb = recipeDbHelper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-
-          /*
-         * Choose the table to query and a sort order based on the code returned for the incoming
-         * URI.
-         */
         switch (uriMatcher.match(uri)) {
             case RECIPES:
                 queryBuilder.setTables(Contracts.RecipesEntry.TABLE_NAME);
                 break;
             case RECIPE_ID:
+                selection = Contracts.RecipesEntry._ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
                 queryBuilder.setTables(Contracts.RecipesEntry.TABLE_NAME);
-                /*
-                 * Because this URI was for a single row, the _ID value part is
-                 * present. Get the last path segment from the URI; this is the _ID value.
-                 * Then, append the value to the WHERE clause for the query
-                 */
-                selection = selection + "_ID = " + uri.getLastPathSegment();
                 break;
             case INGREDIENTS:
                 queryBuilder.setTables(Contracts.IngredientsEntry.TABLE_NAME);
                 break;
             case INGREDIENT_RECIPE_ID:
-                selection=Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID+ " = ?";
-                selectionArgs=new String[1];
-                selectionArgs[0]=uri.getLastPathSegment();
+                selection = Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
                 queryBuilder.setTables(Contracts.IngredientsEntry.TABLE_NAME);
                 break;
             case STEPS:
                 queryBuilder.setTables(Contracts.StepsEntry.TABLE_NAME);
                 break;
             case STEP_RECIPE_ID:
-                selection=Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID+ " = ?";
-                selectionArgs=new String[1];
-                selectionArgs[0]=uri.getLastPathSegment();
+                selection = Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
                 queryBuilder.setTables(Contracts.StepsEntry.TABLE_NAME);
                 break;
 
@@ -231,7 +227,6 @@ public class Provider extends android.content.ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " +
                         uri);
         }
-        // call the code to actually do the query
         Cursor cursor = queryBuilder.query(recipeDb,
                 projection, selection, selectionArgs, null, null,
                 sortOrder);
@@ -250,7 +245,6 @@ public class Provider extends android.content.ContentProvider {
         recipeDb = recipeDbHelper.getWritableDatabase();
         int uriType = uriMatcher.match(uri);
         int rowsUpdated;
-        String id;
         switch (uriType) {
             case RECIPES:
                 rowsUpdated =
@@ -260,22 +254,15 @@ public class Provider extends android.content.ContentProvider {
                                 selectionArgs);
                 break;
             case RECIPE_ID:
-                id = uri.getLastPathSegment();
-                if (TextUtils.isEmpty(selection)) {
-                    rowsUpdated =
-                            recipeDb.update(Contracts.RecipesEntry.TABLE_NAME,
-                                    values,
-                                    Contracts.RecipesEntry._ID + "=" + id,
-                                    null);
-                } else {
-                    rowsUpdated =
-                            recipeDb.update(Contracts.RecipesEntry.TABLE_NAME,
-                                    values,
-                                    Contracts.RecipesEntry._ID + "=" + id
-                                            + " and "
-                                            + selection,
-                                    selectionArgs);
-                }
+                selection = Contracts.RecipesEntry._ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
+                rowsUpdated =
+                        recipeDb.update(Contracts.RecipesEntry.TABLE_NAME,
+                                values,
+                                selection,
+                                selectionArgs);
+
                 break;
             case INGREDIENTS:
                 rowsUpdated =
@@ -285,14 +272,14 @@ public class Provider extends android.content.ContentProvider {
                                 selectionArgs);
                 break;
             case INGREDIENT_RECIPE_ID:
-                selection=Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID+ " = ?";
-                selectionArgs=new String[1];
-                selectionArgs[0]=uri.getLastPathSegment();
-                    rowsUpdated =
-                            recipeDb.update(Contracts.IngredientsEntry.TABLE_NAME,
-                                    values,
-                                    selection,
-                                    selectionArgs);
+                selection = Contracts.IngredientsEntry.COLUMN_INGREDIENT_RECIPE_ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
+                rowsUpdated =
+                        recipeDb.update(Contracts.IngredientsEntry.TABLE_NAME,
+                                values,
+                                selection,
+                                selectionArgs);
                 break;
             case STEPS:
                 rowsUpdated =
@@ -302,9 +289,9 @@ public class Provider extends android.content.ContentProvider {
                                 selectionArgs);
                 break;
             case STEP_RECIPE_ID:
-                selection=Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID+ " = ?";
-                selectionArgs=new String[1];
-                selectionArgs[0]=uri.getLastPathSegment();
+                selection = Contracts.StepsEntry.COLUMN_STEP_RECIPE_ID + " = ?";
+                selectionArgs = new String[1];
+                selectionArgs[0] = uri.getLastPathSegment();
                 rowsUpdated =
                         recipeDb.update(Contracts.StepsEntry.TABLE_NAME,
                                 values,

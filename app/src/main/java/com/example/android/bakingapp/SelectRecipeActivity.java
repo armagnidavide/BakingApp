@@ -2,7 +2,6 @@ package com.example.android.bakingapp;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -40,27 +39,7 @@ public class SelectRecipeActivity extends AppCompatActivity {
     private List<Recipe> recipes;
     private RecipesAdapter adapter;
 
-    /**
-     * public static String strSeparator = "__,__";
-     * <p>
-     * public static String convertArrayToString(String[] array) {
-     * String str = "";
-     * for (int i = 0; i < array.length; i++) {
-     * str = str + array[i];
-     * // Do not append comma at the end of last element
-     * if (i < array.length - 1) {
-     * str = str + strSeparator;
-     * }
-     * }
-     * return str;
-     * }
-     * <p>
-     * public static String[] convertStringToArray(String str) {
-     * String[] arr = str.split(strSeparator);
-     * return arr;
-     * }
-     **/
-    public static Uri insert(Context context, ContentResolver resolver,
+    public static Uri insert(ContentResolver resolver,
                              Uri uri, ContentValues values) {
         try {
             return resolver.insert(uri, values);
@@ -77,6 +56,12 @@ public class SelectRecipeActivity extends AppCompatActivity {
         setLayoutManager();
         adapter = new RecipesAdapter(SelectRecipeActivity.this, null);
         binding.recyclerView.setAdapter(adapter);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (!databaseContainsData()) {
             new DownloadTask().execute(RECIPE_URL);
         } else {
@@ -140,11 +125,16 @@ public class SelectRecipeActivity extends AppCompatActivity {
                 item.setStepsNumber(recipeSteps.size());
                 item.setServings(recipe.optInt("servings"));
                 item.setImage(recipe.optString("image"));
+                item.setLastTimeUsed(getCurrentTime());
                 recipes.add(item);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private long getCurrentTime() {
+        return System.currentTimeMillis();
     }
 
     private ArrayList<Ingredient> createIngredientsArrayList(JSONArray ingredients) {
@@ -200,7 +190,8 @@ public class SelectRecipeActivity extends AppCompatActivity {
             cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_STEPS, recipes.get(i).getStepsNumber());
             cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_SERVINGS, recipes.get(i).getServings());
             cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL, recipes.get(i).getImage());
-            insert(this, getContentResolver(), Contracts.RecipesEntry.CONTENT_URI, cv);
+            cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED, recipes.get(i).getLastTimeUsed());
+            insert(getContentResolver(), Contracts.RecipesEntry.CONTENT_URI, cv);
         }
 
     }
@@ -213,7 +204,7 @@ public class SelectRecipeActivity extends AppCompatActivity {
             cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_NAME, currentIngredient.getName());
             cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_QUANTITY, currentIngredient.getQuantity());
             cv.put(Contracts.IngredientsEntry.COLUMN_INGREDIENT_MEASURE, currentIngredient.getMeasure());
-            insert(this, getContentResolver(), Contracts.IngredientsEntry.CONTENT_URI, cv);
+            insert(getContentResolver(), Contracts.IngredientsEntry.CONTENT_URI, cv);
 
         }
     }
@@ -227,7 +218,7 @@ public class SelectRecipeActivity extends AppCompatActivity {
             cv.put(Contracts.StepsEntry.COLUMN_STEP_SHORT_DESCRIPTION, currentStep.getShortDescription());
             cv.put(Contracts.StepsEntry.COLUMN_STEP_VIDEO_URL, currentStep.getVideoURL());
             cv.put(Contracts.StepsEntry.COLUMN_STEP_THUMBNAIL_URL, currentStep.getThumbnailURL());
-            insert(this, getContentResolver(), Contracts.StepsEntry.CONTENT_URI, cv);
+            insert(getContentResolver(), Contracts.StepsEntry.CONTENT_URI, cv);
         }
     }
 
@@ -249,12 +240,14 @@ public class SelectRecipeActivity extends AppCompatActivity {
                 int stepsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_STEPS));
                 int servings = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_SERVINGS));
                 String thumbnail = cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL));
+                long lastTimeUsed = cursor.getLong(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED));
                 recipe.setId(recipeId);
                 recipe.setName(name);
                 recipe.setIngredientsNumber(ingredientsNumber);
                 recipe.setStepsNumber(stepsNumber);
                 recipe.setServings(servings);
                 recipe.setImage(thumbnail);
+                recipe.setLastTimeUsed(lastTimeUsed);
                 recipes.add(recipe);
                 cursor.moveToNext();
             }

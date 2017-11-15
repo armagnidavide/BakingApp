@@ -1,10 +1,12 @@
 package com.example.android.bakingapp;
 
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -16,7 +18,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +40,14 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     public static final String RECIPE_ID = "recipe_id";
     public static final String RECIPE_NAME = "recipe_name";
     public static final String RECIPE_SERVING = "recipe_serving";
+    public static final String RECIPE_LAST_TIME_USED = "last_time_used";
+    public static final String POSITION = "last_time_used";
+    public static final String ACTION_GET_RECIPE_DATA_FROM_CURSOR = "get_recipe_data_from_cursor";
+    public static final String ACTION_GET_RECIPE_DATA_FROM_THIS_INTENT = "get_recipe_data_from_this_intent";
+
+
     private static final int LOADER_STEP = 1;
+    private static final int LOADER_RECIPE = 2;
     ActivitySelectRecipeStepBinding binding;
     /**
      * Whether or not the activity is in two-pane mode
@@ -48,29 +56,41 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     private RecyclerView recyclerView;
     private TextView txtVwRecipeName;
     private TextView txtVwRecipeServing;
-    private Button btnShowIngredients;
-    private int recipeId;
+    private int recipeId = 0;
     private String recipeName;
     private int recipeServing;
+    private long currentTime;
+    private boolean gettingARecipeFromCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_recipe_step);
-        getDataFromIntent();
         initializations();
-        displayIntentData();
-        startLoader();
         checkDetailContainerViewInsideLayout();
+        getDataFromIntent();
+        if (gettingARecipeFromCursor) startRecipeLoader();
+        updateTime();
+        if (!gettingARecipeFromCursor) startStepLoader();
+
 
     }
 
+    private void updateTime() {
+        new UpdateTimeAsyncTask().execute();
+    }
 
     private void getDataFromIntent() {
         Intent intent = getIntent();
         recipeId = intent.getIntExtra(RECIPE_ID, 0);
-        recipeName = intent.getStringExtra(RECIPE_NAME);
-        recipeServing = intent.getIntExtra(RECIPE_SERVING, 0);
+        if (intent.getAction().equals(ACTION_GET_RECIPE_DATA_FROM_THIS_INTENT)) {
+            gettingARecipeFromCursor = false;
+            recipeName = intent.getStringExtra(RECIPE_NAME);
+            recipeServing = intent.getIntExtra(RECIPE_SERVING, 0);
+            displayIntentData();
+        } else if (intent.getAction().equals(ACTION_GET_RECIPE_DATA_FROM_CURSOR)) {
+            gettingARecipeFromCursor = true;
+        }
     }
 
     private void checkDetailContainerViewInsideLayout() {
@@ -83,15 +103,19 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
         }
     }
 
-    private void startLoader() {
-        getSupportLoaderManager().initLoader(LOADER_STEP, null, this);
+    private void startStepLoader() {
+        getSupportLoaderManager().restartLoader(LOADER_STEP, null, this);
+    }
+
+    private void startRecipeLoader() {
+        getSupportLoaderManager().restartLoader(LOADER_RECIPE, null, this);
     }
 
     private void initializations() {
+        currentTime = System.currentTimeMillis();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_steps);
         txtVwRecipeName = (TextView) findViewById(R.id.txtVw_recipe_name);
         txtVwRecipeServing = (TextView) findViewById(R.id.txtVw_recipe_serving);
-        btnShowIngredients = (Button) findViewById(R.id.btn_show_ingredients);
     }
 
     private void displayIntentData() {
@@ -102,22 +126,28 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     public void displayIngredients(View v) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putInt(IngredientsFragment.INGREDIENT_RECIPE_ID,recipeId);
+            arguments.putInt(IngredientsFragment.INGREDIENT_RECIPE_ID, recipeId);
             IngredientsFragment fragment = new IngredientsFragment();
             openFragment(fragment, arguments);
         } else {
             Context context = v.getContext();
             Intent intent = new Intent(context, StepDetailActivity.class);
-            intent.putExtra(IngredientsFragment.INGREDIENT_RECIPE_ID,recipeId);
+            intent.putExtra(IngredientsFragment.INGREDIENT_RECIPE_ID, recipeId);
             openActivity(intent);
         }
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
         if (id == LOADER_STEP) {
             return new CursorLoader(this, ContentUris.withAppendedId(Contracts.StepsEntry.CONTENT_URI, recipeId),
+                    null,
+                    null,
+                    null,
+                    null);
+        } else if (id == LOADER_RECIPE) {
+            return new CursorLoader(this, ContentUris.withAppendedId(Contracts.RecipesEntry.CONTENT_URI, recipeId),
                     null,
                     null,
                     null,
@@ -128,24 +158,33 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<Step> stepArrayList = new ArrayList<>();
         if (data != null && data.getCount() > 0) {
             data.moveToFirst();
-            for (int i = 0; i < data.getCount(); i++) {
-                Step step = new Step();
-                String stepDescription = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_DESCRIPTION));
-                String stepImageUrl = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_THUMBNAIL_URL));
-                String stepShortDescription = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_SHORT_DESCRIPTION));
-                String stepVideoURL=data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_VIDEO_URL));
+            if (loader.getId() == LOADER_STEP) {
+                ArrayList<Step> stepArrayList = new ArrayList<>();
+                for (int i = 0; i < data.getCount(); i++) {
+                    Step step = new Step();
+                    String stepDescription = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_DESCRIPTION));
+                    String stepImageUrl = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_THUMBNAIL_URL));
+                    String stepShortDescription = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_SHORT_DESCRIPTION));
+                    String stepVideoURL = data.getString(data.getColumnIndex(Contracts.StepsEntry.COLUMN_STEP_VIDEO_URL));
 
-                step.setDescription(stepDescription);
-                step.setThumbnailURL(stepImageUrl);
-                step.setShortDescription(stepShortDescription);
-                step.setVideoURL(stepVideoURL);
-                stepArrayList.add(step);
-                data.moveToNext();
+                    step.setDescription(stepDescription);
+                    step.setThumbnailURL(stepImageUrl);
+                    step.setShortDescription(stepShortDescription);
+                    step.setVideoURL(stepVideoURL);
+                    stepArrayList.add(step);
+                    data.moveToNext();
+                }
+                data.close();
+                setupRecyclerView(stepArrayList);
+            } else if (loader.getId() == LOADER_RECIPE) {
+                recipeName = data.getString(data.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_NAME));
+                recipeServing = data.getInt(data.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_SERVINGS));
+                displayIntentData();
+                data.close();
+                startStepLoader();
             }
-            setupRecyclerView(stepArrayList);
         }
     }
 
@@ -154,13 +193,12 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
 
     }
 
-
     private void setupRecyclerView(ArrayList<Step> steps) {
 
         recyclerView.setAdapter(new StepRecyclerViewAdapter(this, steps));
     }
 
-    public void openFragment(Fragment fragment, Bundle arguments) {
+    public  void openFragment(Fragment fragment, Bundle arguments) {
         fragment.setArguments(arguments);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.item_detail_container, fragment)
@@ -171,6 +209,24 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
         startActivity(intent);
     }
 
+    private class UpdateTimeAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ContentValues cv = new ContentValues();
+            cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED, currentTime);
+            getContentResolver().update(ContentUris.withAppendedId(Contracts.RecipesEntry.CONTENT_URI, recipeId),
+                    cv,
+                    null,
+                    null);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            IngredientIntentService.startActionShowIngredients(getApplicationContext(), IngredientIntentService.ACTION_SHOW_LAST_USED_RECIPE, recipeId);
+        }
+    }
     public class StepRecyclerViewAdapter extends RecyclerView.Adapter<StepRecyclerViewAdapter.CustomViewHolder> {
         private List<Step> stepList;
         private Context mContext;
@@ -196,8 +252,8 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
                         .error(R.drawable.recipe_placeholder)
                         .placeholder(R.drawable.recipe_placeholder)
                         .into(customViewHolder.imgVwStepImage);
-            }else{
-                customViewHolder.imgVwStepImage.setImageDrawable(getResources().getDrawable(R.drawable.recipe_placeholder));
+            } else {
+                customViewHolder.imgVwStepImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.recipe_placeholder));
             }
             //Setting step's short description
             customViewHolder.txtVwStepShortDescription.setText(customViewHolder.step.getShortDescription());
@@ -217,7 +273,7 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
                         intent.putExtra(StepDetailFragment.STEP_DESCRIPTION, customViewHolder.step.getDescription());
                         intent.putExtra(StepDetailFragment.STEP_VIDEO_URL, customViewHolder.step.getVideoURL());
                         intent.putExtra(StepDetailFragment.STEP_IMAGE_URL, customViewHolder.step.getThumbnailURL());
-                        intent.putExtra(StepDetailActivity.FRAGMENT_TYPE,StepDetailActivity.FRAGMENT_STEP);
+                        intent.putExtra(StepDetailActivity.FRAGMENT_TYPE, StepDetailActivity.FRAGMENT_STEP);
                         openActivity(intent);
 
 
@@ -249,5 +305,7 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
 
         }
     }
+
+
 
 }

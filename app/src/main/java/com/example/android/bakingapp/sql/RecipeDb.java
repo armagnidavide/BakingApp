@@ -23,6 +23,7 @@ public class RecipeDb extends SQLiteOpenHelper {
                 + Contracts.RecipesEntry.COLUMN_RECIPE_INGREDIENTS + " INTEGER" + ","
                 + Contracts.RecipesEntry.COLUMN_RECIPE_STEPS + " INTEGER " + ","
                 + Contracts.RecipesEntry.COLUMN_RECIPE_SERVINGS + " INTEGER " + ","
+                + Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED + " INTEGER " + ","
                 + Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL + " TEXT "
                 + ")";
         String CREATE_INGREDIENTS_TABLE = "CREATE TABLE " + Contracts.IngredientsEntry.TABLE_NAME + "("

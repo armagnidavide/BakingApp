@@ -33,6 +33,7 @@ public class Contracts {
         public static final String COLUMN_RECIPE_STEPS = "steps";
         public static final String COLUMN_RECIPE_SERVINGS = "servings";
         public static final String COLUMN_RECIPE_THUMBNAIL = "thumbnail";
+        public static final String COLUMN_RECIPE_LAST_TIME_USED = "last_time";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
@@ -75,10 +76,6 @@ public class Contracts {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY +
                         "/" + PATH_INGREDIENTS;
 
-        // Helper method.
-        public static Uri buildIngredientUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
 
     }
 
