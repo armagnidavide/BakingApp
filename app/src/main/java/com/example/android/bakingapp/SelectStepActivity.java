@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.bakingapp.databinding.ActivitySelectRecipeStepBinding;
+import com.example.android.bakingapp.databinding.ActivitySelectStepBinding;
 import com.example.android.bakingapp.sql.Contracts;
 import com.squareup.picasso.Picasso;
 
@@ -41,14 +41,13 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     public static final String RECIPE_NAME = "recipe_name";
     public static final String RECIPE_SERVING = "recipe_serving";
     public static final String RECIPE_LAST_TIME_USED = "last_time_used";
-    public static final String POSITION = "last_time_used";
     public static final String ACTION_GET_RECIPE_DATA_FROM_CURSOR = "get_recipe_data_from_cursor";
     public static final String ACTION_GET_RECIPE_DATA_FROM_THIS_INTENT = "get_recipe_data_from_this_intent";
 
 
     private static final int LOADER_STEP = 1;
     private static final int LOADER_RECIPE = 2;
-    ActivitySelectRecipeStepBinding binding;
+    ActivitySelectStepBinding binding;
     /**
      * Whether or not the activity is in two-pane mode
      */
@@ -56,6 +55,7 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     private RecyclerView recyclerView;
     private TextView txtVwRecipeName;
     private TextView txtVwRecipeServing;
+
     private int recipeId = 0;
     private String recipeName;
     private int recipeServing;
@@ -65,7 +65,7 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_select_recipe_step);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_select_step);
         initializations();
         checkDetailContainerViewInsideLayout();
         getDataFromIntent();
@@ -224,13 +224,13 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            IngredientIntentService.startActionShowIngredients(getApplicationContext(), IngredientIntentService.ACTION_SHOW_LAST_USED_RECIPE, recipeId);
+            GetRecipeInformationService.startActionShowIngredients(getApplicationContext(), GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE, recipeId);
         }
     }
     public class StepRecyclerViewAdapter extends RecyclerView.Adapter<StepRecyclerViewAdapter.CustomViewHolder> {
         private List<Step> stepList;
         private Context mContext;
-
+        private StepRecyclerViewAdapter.CustomViewHolder customViewHolder;
 
         public StepRecyclerViewAdapter(Context context, List<Step> stepList) {
             this.stepList = stepList;
@@ -239,12 +239,13 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
 
         @Override
         public StepRecyclerViewAdapter.CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.step_item, null);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.step_item,viewGroup,false );
             return new StepRecyclerViewAdapter.CustomViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final StepRecyclerViewAdapter.CustomViewHolder customViewHolder, int position) {
+        public void onBindViewHolder(final StepRecyclerViewAdapter.CustomViewHolder customViewHolder, final int position) {
+            this.customViewHolder=customViewHolder;
             customViewHolder.step = stepList.get(position);
             //Render image using Picasso library
             if (!TextUtils.isEmpty(customViewHolder.step.getThumbnailURL())) {
@@ -274,6 +275,8 @@ public class SelectStepActivity extends AppCompatActivity implements LoaderManag
                         intent.putExtra(StepDetailFragment.STEP_VIDEO_URL, customViewHolder.step.getVideoURL());
                         intent.putExtra(StepDetailFragment.STEP_IMAGE_URL, customViewHolder.step.getThumbnailURL());
                         intent.putExtra(StepDetailActivity.FRAGMENT_TYPE, StepDetailActivity.FRAGMENT_STEP);
+                        intent.putExtra(StepDetailActivity.STEP_ADAPTER_POSITION, customViewHolder.getAdapterPosition());
+                        intent.putExtra(StepDetailActivity.RECIPE_ID,recipeId);
                         openActivity(intent);
 
 

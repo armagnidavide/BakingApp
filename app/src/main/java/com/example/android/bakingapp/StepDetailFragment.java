@@ -18,12 +18,8 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -41,8 +37,6 @@ public class StepDetailFragment extends Fragment {
     public static final String STEP_IMAGE_URL = "step_image_url";
 
     private TextView txtVwStepDescription;
-    private TextView txtVwStepVideo;
-    private TextView txtVwStepImage;
     private ImageView imgVwStepImage;
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer simpleExoPlayer;
@@ -74,27 +68,36 @@ public class StepDetailFragment extends Fragment {
             stepVideoURL = arguments.getString(STEP_VIDEO_URL);
             stepImageURL = arguments.getString(STEP_IMAGE_URL);
         }
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_recipe_step_detail_, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_step_detail_, container, false);
         initializations(rootView);
+        setVideo();
+        setImage();
+        setDescription();
+        return rootView;
+    }
+
+    private void initializations(View rootView) {
+        simpleExoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
+        txtVwStepDescription = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_description);
+        imgVwStepImage = (ImageView) rootView.findViewById(R.id.imgVw_recipe_step_image);
+    }
+
+    private void setVideo() {
         simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.recipe_placeholder));
-        if (stepDescription != null) {
-            txtVwStepDescription.setText(stepDescription);
-        }
         if (stepVideoURL != null && !stepVideoURL.equals("")) {
             initializePlayer();
-            txtVwStepVideo.setText(stepVideoURL);
         } else {
             simpleExoPlayerView.setVisibility(View.GONE);
         }
+    }
+
+    private void setImage() {
         if (stepImageURL != null) {
-            txtVwStepImage.setText(stepImageURL);
             //Render image using Picasso library
             if (!TextUtils.isEmpty(stepImageURL)) {
                 Picasso.with(this.getContext()).load(stepImageURL)
@@ -102,13 +105,18 @@ public class StepDetailFragment extends Fragment {
                         .placeholder(R.drawable.recipe_placeholder)
                         .into(imgVwStepImage);
             } else {
-                imgVwStepImage.setImageDrawable(getResources().getDrawable(R.drawable.recipe_placeholder));
+                imgVwStepImage.setVisibility(View.GONE);
             }
         }
-
-
-        return rootView;
     }
+
+    private void setDescription() {
+        if (stepDescription != null) {
+            txtVwStepDescription.setText(stepDescription);
+        }
+
+    }
+
 
     private void initializePlayer() {
         if (simpleExoPlayer == null) {
@@ -118,18 +126,13 @@ public class StepDetailFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (stepVideoURL != null && !stepVideoURL.equals("")) {
-            releaseThePlayer();
-        }
+    private void creatingThePlayer() {
+        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
     }
 
-    private void releaseThePlayer() {
-        simpleExoPlayer.stop();
-        simpleExoPlayer.release();
-        simpleExoPlayer = null;
+    private void attachingPlayerToTheView() {
+        simpleExoPlayerView.setPlayer(simpleExoPlayer);
+
     }
 
     private void preparingThePlayer() {
@@ -140,40 +143,30 @@ public class StepDetailFragment extends Fragment {
                 Util.getUserAgent(getContext(), "bakingApp"), bandwidthMeter);
         // Produces Extractor instances for parsing the media data.
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        // This is the MediaSource representing the media to be played.
+        // This is the MediaSource that is responsable for loading the media and providing it to the player.
         MediaSource videoSource = new ExtractorMediaSource(Uri.parse(stepVideoURL),
                 dataSourceFactory, extractorsFactory, null, null);
-
         // Prepare the player with the source.
         simpleExoPlayer.prepare(videoSource);
-        //simpleExoPlayer.setPlayWhenReady(true);
-    }
-
-    private void attachingPlayerToTheView() {
-        simpleExoPlayerView.setPlayer(simpleExoPlayer);
-
-    }
-
-
-    private void creatingThePlayer() {
-        // 1. Create a default TrackSelector
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
-        // 2. Create the player
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
         //the video start when it's ready
         simpleExoPlayer.setPlayWhenReady(true);
     }
 
 
-    private void initializations(View rootView) {
-        simpleExoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
-        txtVwStepDescription = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_description);
-        txtVwStepVideo = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_videoURL);
-        imgVwStepImage=(ImageView)rootView.findViewById(R.id.imgVw_recipe_step_image);
-        txtVwStepImage = (TextView) rootView.findViewById(R.id.txtVw_recipe_step_detail_imageURL);
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (stepVideoURL != null && !stepVideoURL.equals("")) {
+            releaseThePlayer();
+        }
     }
+
+    /**
+     * It's important to release the player when playback is completed because the player
+     * holds system resources
+     */
+    private void releaseThePlayer() {
+        simpleExoPlayer.release();
+    }
+
 }

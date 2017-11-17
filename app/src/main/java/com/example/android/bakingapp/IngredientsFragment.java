@@ -21,7 +21,6 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
 
     public static final String INGREDIENT_RECIPE_ID = "recipe_id";
     private static final int LOADER_INGREDIENTS = 2;
-    private static final String RECIPE_ID = "recipe_id";
     private RecyclerView ingredientRecyclerView;
     private int recipeId;
 
@@ -58,7 +57,7 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_ingredients, container, false);
         initializations(rootView);
         takeIngredientsFromDb();
         return rootView;

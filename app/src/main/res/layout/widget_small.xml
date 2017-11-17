@@ -2,89 +2,116 @@
     android:id="@+id/appwidget_layout_small"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="@color/colorYellowLight"
     android:padding="@dimen/widget_margin"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="8dp">
+        <Button
+            android:id="@+id/btn_appwidget_previous"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_appwidget_previous"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <Button
+            android:id="@+id/btn_appwidget_next"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_appwidget_next"
+            android:textColor="@color/colorPrimaryDark" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="8dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/appwidget_recipe_label" />
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/appwidget_recipe_label"
+            android:textStyle="bold"
+            android:textColor="@color/colorBrown" />
 
         <TextView
             android:id="@+id/appwidget_recipe_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="#09C"
+            android:layout_weight="2"
             android:contentDescription="@string/appwidget_title"
             android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             android:textStyle="bold|italic" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="8dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/appwidget_ingredients_number_label" />
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/appwidget_ingredients_number_label"
+            android:textStyle="bold"
+            android:textColor="@color/colorBrown" />
 
         <TextView
             android:id="@+id/appwidget_recipe_ingredients_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="#09C"
+            android:layout_weight="2"
             android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             android:textStyle="bold|italic" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="8dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/appwidget_steps_number_label" />
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/appwidget_steps_number_label"
+            android:textStyle="bold"
+            android:textColor="@color/colorBrown" />
 
         <TextView
             android:id="@+id/appwidget_recipe_steps_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:background="#09C"
+            android:layout_weight="2"
             android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             android:textStyle="bold|italic" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/appwidget_recipe_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
         android:contentDescription="@string/appwidget_small_image_content_description" />
-
-
 </LinearLayout>

@@ -44,16 +44,16 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
     public static void updateRecipeWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds,
                                            int recipeId, String recipeName, int ingredientsNumber, int stepsNumber,
-                                           int recipeServing, String recipeThumbnail) {
+                                           String recipeThumbnail) {
         for (int appWidgetId : appWidgetIds) {
             Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
             int width = options.getInt(appWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 
             RemoteViews rv;
             if (width < 300) {
-                rv = setSmallRemoteView(context, recipeId, recipeName, ingredientsNumber, stepsNumber, recipeServing, appWidgetIds, recipeThumbnail);
+                rv = setSmallRemoteView(context, recipeId, recipeName, ingredientsNumber, stepsNumber, appWidgetIds, recipeThumbnail);
             } else {
-                rv = setListRemoteView(context, recipeId, recipeName, recipeServing, appWidgetIds, recipeThumbnail);
+                rv = setListRemoteView(context, recipeId, recipeName, appWidgetIds, recipeThumbnail);
             }
             //Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, rv);
@@ -61,12 +61,16 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     }
 
     private static RemoteViews setSmallRemoteView(Context context, int recipeId, String recipeName, int ingredientsNumber,
-                                                 int stepsNumber, int recipeServing, int[] appWidgetIds, String recipeThumbnail) {
+                                                  int stepsNumber, int[] appWidgetIds, String recipeThumbnail) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_small);
         views.setTextViewText(R.id.appwidget_recipe_name, recipeName);
         views.setTextViewText(R.id.appwidget_recipe_ingredients_number, String.valueOf(ingredientsNumber));
         views.setTextViewText(R.id.appwidget_recipe_steps_number, String.valueOf(stepsNumber));
+        views.setOnClickPendingIntent(R.id.btn_appwidget_next,
+                getPendingSelfIntent(context, SHOW_NEXT, recipeId));
+        views.setOnClickPendingIntent(R.id.btn_appwidget_previous,
+                getPendingSelfIntent(context, SHOW_PREVIOUS, recipeId));
         // Load image for all appWidgetIds.
         //Render image using Picasso library
         if (!TextUtils.isEmpty(recipeThumbnail)) {
@@ -96,7 +100,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
      * @return the RemoteViews for the ListView mode widget
      */
     private static RemoteViews setListRemoteView(Context context, int recipeId, String recipeName
-            , int recipeServing, int[] appWidgetIds, String recipeThumbnail) {
+            , int[] appWidgetIds, String recipeThumbnail) {
         PendingIntent goToSelectStepActivityPendingIntent = getSelectStepActivityPendingIntent(context, recipeId);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
         // Load image for all appWidgetIds.
@@ -110,7 +114,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             views.setImageViewResource(R.id.appwidget_recipe_image, R.drawable.recipe_placeholder);
         }
         views.setOnClickPendingIntent(R.id.lnrLyt_for_pendingIntent, goToSelectStepActivityPendingIntent);
-        views.setPendingIntentTemplate(R.id.widget_list_view,goToSelectStepActivityPendingIntent);
+        views.setPendingIntentTemplate(R.id.widget_list_view, goToSelectStepActivityPendingIntent);
         views.setTextViewText(R.id.appwidget_recipe_name, recipeName);
         views.setOnClickPendingIntent(R.id.btn_appwidget_next,
                 getPendingSelfIntent(context, SHOW_NEXT, recipeId));
@@ -132,9 +136,9 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (SHOW_NEXT.equals(intent.getAction())) {
-            IngredientIntentService.startActionShowIngredients(context, IngredientIntentService.ACTION_SHOW_NEXT_RECIPE, intent.getIntExtra("recipeId", 1));
+            GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_NEXT_RECIPE, intent.getIntExtra("recipeId", 1));
         } else if (SHOW_PREVIOUS.equals(intent.getAction())) {
-            IngredientIntentService.startActionShowIngredients(context, IngredientIntentService.ACTION_SHOW_PREVIOUS_RECIPE, intent.getIntExtra("recipeId", 1));
+            GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_PREVIOUS_RECIPE, intent.getIntExtra("recipeId", 1));
         }
     }
 
@@ -142,14 +146,14 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
-        IngredientIntentService.startActionShowIngredients(context, IngredientIntentService.ACTION_SHOW_LAST_USED_RECIPE);
+        GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
     }
 
     //Called in response to the ACTION_APPWIDGET_UPDATE and ACTION_APPWIDGET_RESTORED
     // broadcasts when this AppWidget provider is being asked to provide RemoteViews for a set of AppWidgets
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        IngredientIntentService.startActionShowIngredients(context, IngredientIntentService.ACTION_SHOW_LAST_USED_RECIPE);
+        GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
 
     }
 

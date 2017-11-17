@@ -23,7 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectStepActivity" />
-        <activity android:name=".StepDetailActivity" />
+        <activity android:name=".StepDetailActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:noHistory="true"
+            />
 
         <provider
             android:name=".sql.Provider"
@@ -45,7 +48,7 @@
         </receiver>
 
         <service
-            android:name=".IngredientIntentService"
+            android:name=".GetRecipeInformationService"
             android:exported="false" />
         <service
             android:name=".ListWidgetService"

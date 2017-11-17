@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -28,17 +27,12 @@ public class ListRemoteViewFactory implements RemoteViewsService.RemoteViewsFact
     public ListRemoteViewFactory(Context applicationContext, Intent intent) {
         context=applicationContext;
         recipeId=intent.getIntExtra("recipeId",4);
-        Log.e("BakingAppDebug", "GridRemoteViewsFactory constructor, recipeId= "+recipeId );
-
 
     }
 
     @Override
     public void onCreate() {
     }
-
-
-
 
     private void getIngredientsFromDesiredRecipe() {
             ingredientsCursor = context.getContentResolver().query(
@@ -53,7 +47,6 @@ public class ListRemoteViewFactory implements RemoteViewsService.RemoteViewsFact
     // called on start and whe notifyAppWidgetViewDataChanged
     @Override
     public void onDataSetChanged() {
-        Log.e("BakingAppDebug","GridRemoteViewsFactory onDataSetChange() recipeId = "+ recipeId);
         getIngredientsFromDesiredRecipe();
     }
 

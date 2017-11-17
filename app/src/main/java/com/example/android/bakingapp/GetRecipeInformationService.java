@@ -14,17 +14,15 @@ import com.example.android.bakingapp.sql.Contracts;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  */
-public class IngredientIntentService extends IntentService {
+public class GetRecipeInformationService extends IntentService {
     public static final String ACTION_SHOW_LAST_USED_RECIPE = "com.example.android.bakingapp.action.SHOW_LAST_USED_RECIPE";
     public static final String ACTION_SHOW_NEXT_RECIPE = "com.example.android.bakingapp.action.SHOW_NEXT_RECIPE";
     public static final String ACTION_SHOW_PREVIOUS_RECIPE = "com.example.android.bakingapp.action.SHOW_PREVIOUS_RECIPE";
 
-    private int recipeId;
     private int cursorCount;
 
-
-    public IngredientIntentService() {
-        super("IngredientIntentService");
+    public GetRecipeInformationService() {
+        super("GetRecipeInformationService");
     }
 
     /**
@@ -35,13 +33,13 @@ public class IngredientIntentService extends IntentService {
      */
     //
     public static void startActionShowIngredients(Context context, String action) {//called in selectStepActivity()
-        Intent intent = new Intent(context, IngredientIntentService.class);
+        Intent intent = new Intent(context, GetRecipeInformationService.class);
         intent.setAction(action);
         context.startService(intent);
     }
 
     public static void startActionShowIngredients(Context context, String action, int recipeId) {
-        Intent intent = new Intent(context, IngredientIntentService.class);
+        Intent intent = new Intent(context, GetRecipeInformationService.class);
         intent.setAction(action);
         intent.putExtra("recipeId", recipeId);
         context.startService(intent);
@@ -49,6 +47,7 @@ public class IngredientIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        int recipeId;
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_SHOW_LAST_USED_RECIPE.equals(action)) {
@@ -77,7 +76,6 @@ public class IngredientIntentService extends IntentService {
         String recipeName;
         int recipeIngredientsNumber;
         int recipeStepsNumber;
-        int recipeServing;
         String recipeThumbnail;
 
         Cursor cursor = getCursor(action, recipeId);
@@ -87,7 +85,6 @@ public class IngredientIntentService extends IntentService {
             recipeIngredientsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_INGREDIENTS));
             recipeStepsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_STEPS));
             recipeId = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry._ID));
-            recipeServing = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_SERVINGS));
             recipeThumbnail=cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL));
             cursor.close();
 
@@ -97,7 +94,6 @@ public class IngredientIntentService extends IntentService {
                     recipeName,
                     recipeIngredientsNumber,
                     recipeStepsNumber,
-                    recipeServing,
                     recipeThumbnail);
 
         }
@@ -114,16 +110,16 @@ public class IngredientIntentService extends IntentService {
                 null,
                 null,
                 Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED + " DESC ");
-        cursorCount = cursor.getCount();
+        if(cursor!=null) cursorCount = cursor.getCount();
         if (action != null && (action.equals(ACTION_SHOW_PREVIOUS_RECIPE) || action.equals(ACTION_SHOW_NEXT_RECIPE))) {
 
-            if (action.equals(IngredientIntentService.ACTION_SHOW_NEXT_RECIPE)) {
+            if (action.equals(GetRecipeInformationService.ACTION_SHOW_NEXT_RECIPE)) {
                 if (recipeId == cursorCount) {
                     recipeId = 1;
                 } else {
                     recipeId = recipeId + 1;
                 }
-            } else if (action.equals(IngredientIntentService.ACTION_SHOW_PREVIOUS_RECIPE)) {
+            } else if (action.equals(GetRecipeInformationService.ACTION_SHOW_PREVIOUS_RECIPE)) {
                 if (recipeId == 1) {
                     recipeId = cursorCount;
                 } else {

@@ -6,8 +6,8 @@
         android:id="@+id/activity_select_recipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f1f1f1"
         android:padding="12dp"
+        android:background="@color/colorOrangeLight"
         tools:context="com.example.android.bakingapp.SelectRecipeActivity">
         <!--This RecyclerView contains a list of Recipes-->
 

@@ -10,41 +10,124 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--This ImageView contains an illustration of the recipe or a placeholder-->
-        <ImageView
-            android:id="@+id/imgVw_recipe_image"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_alignParentTop="true"
-            android:contentDescription="@string/recipe_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/recipe_placeholder" />
+        android:layout_height="wrap_content"
+        android:background="@color/colorYellowLight">
         <!--This TextView contains the name of the recipe-->
         <TextView
             android:id="@+id/txtVw_recipe_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imgVw_recipe_image"
-            android:layout_centerVertical="true" />
-        <!--This TextView contains the serving of the recipe-->
-        <TextView
-            android:id="@+id/txtVw_recipe_serving"
-            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtVw_recipe_name" />
-        <!--This TextView contains the number of steps necessary to complete the recipe.-->
-        <TextView
-            android:id="@+id/txtVw_recipe_steps_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtVw_recipe_serving" />
-        <!--This TextView contains the number of ingredients for the recipe.-->
-        <TextView
-            android:id="@+id/txtVw_recipe_ingredients_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtVw_recipe_steps_number" />
+            android:layout_below="@id/txtVw_recipe_name"
+            android:orientation="horizontal">
+            <!--This ImageView contains an illustration of the recipe or a placeholder-->
+            <ImageView
+                android:id="@+id/imgVw_recipe_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="8dp"
+                android:contentDescription="@string/recipe_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/recipe_placeholder" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/selectrecipe_activity_servings_label"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <!--This TextView contains the serving of the recipe-->
+                    <TextView
+                        android:id="@+id/txtVw_recipe_serving"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/select_recipe_activity_steps_label"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <!--This TextView contains the number of steps necessary to complete the recipe.-->
+                    <TextView
+                        android:id="@+id/txtVw_recipe_steps_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:text="@string/select_recipe_activity_ingredients_label"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+                    <!--This TextView contains the number of ingredients for the recipe.-->
+                    <TextView
+                        android:id="@+id/txtVw_recipe_ingredients_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
 
     </RelativeLayout>

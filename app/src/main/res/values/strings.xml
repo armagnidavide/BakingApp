@@ -19,4 +19,14 @@
     <string name="appwidget_grid_recipe_image">recipe image</string>
     <string name="content_description_step_image">content_description_step_image</string>
     <string name="appwidget_recipe_image_content_description">recipe image</string>
+    <string name="select_step_activity_servings_label">Servings :</string>
+    <string name="selectrecipe_activity_servings_label">Servings :</string>
+    <string name="select_recipe_activity_steps_label">Steps :</string>
+    <string name="select_recipe_activity_ingredients_label">Ingredients :</string>
+    <string name="activity_select_recipe_step_btn_show_ingredients">Show Ingredients</string>
+    <string name="ingredient_item_ingredient_name_label">Name :</string>
+    <string name="ingredient_item_quantity_label">Quantity :</string>
+    <string name="ingredient_item_measure_label">Measure :</string>
+    <string name="step_detail_activity_btn_next">Next</string>
+    <string name="step_detail_activity_btn_previous">Previous</string>
 </resources>
