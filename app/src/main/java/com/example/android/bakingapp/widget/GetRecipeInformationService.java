@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.widget;
 
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
@@ -10,40 +10,32 @@ import android.database.Cursor;
 
 import com.example.android.bakingapp.sql.Contracts;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- */
-public class GetRecipeInformationService extends IntentService {
-    public static final String ACTION_SHOW_LAST_USED_RECIPE = "com.example.android.bakingapp.action.SHOW_LAST_USED_RECIPE";
-    public static final String ACTION_SHOW_NEXT_RECIPE = "com.example.android.bakingapp.action.SHOW_NEXT_RECIPE";
-    public static final String ACTION_SHOW_PREVIOUS_RECIPE = "com.example.android.bakingapp.action.SHOW_PREVIOUS_RECIPE";
 
-    private int cursorCount;
+public class GetRecipeInformationService extends IntentService {
+
+    public static final String ACTION_SHOW_LAST_USED_RECIPE = "show_last_used_recipe";
+    public static final String ACTION_SHOW_NEXT_RECIPE = "show_next_recipe";
+    public static final String ACTION_SHOW_PREVIOUS_RECIPE = "show_previous_recipe";
+
+    private int cursorCount;//the number of recipes inside the db
 
     public GetRecipeInformationService() {
         super("GetRecipeInformationService");
     }
 
-    /**
-     * Starts this service to perform action SHOW_INGREDIENTS with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    //
-    public static void startActionShowIngredients(Context context, String action) {//called in selectStepActivity()
+    public static void showRecipeDataIntoTheWidget(Context context, String action) {
         Intent intent = new Intent(context, GetRecipeInformationService.class);
         intent.setAction(action);
         context.startService(intent);
     }
 
-    public static void startActionShowIngredients(Context context, String action, int recipeId) {
+    public static void showRecipeDataIntoTheWidget(Context context, String action, int recipeId) {
         Intent intent = new Intent(context, GetRecipeInformationService.class);
         intent.setAction(action);
         intent.putExtra("recipeId", recipeId);
         context.startService(intent);
     }
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -52,25 +44,19 @@ public class GetRecipeInformationService extends IntentService {
             final String action = intent.getAction();
             if (ACTION_SHOW_LAST_USED_RECIPE.equals(action)) {
                 recipeId = intent.getIntExtra("recipeId", 1);
-                handleActionShowIngredients(ACTION_SHOW_LAST_USED_RECIPE, recipeId);
+                handleActionShowRecipeDataIntoTheWidget(ACTION_SHOW_LAST_USED_RECIPE, recipeId);
             } else if (ACTION_SHOW_NEXT_RECIPE.equals(action)) {
                 recipeId = intent.getIntExtra("recipeId", 1);
-                handleActionShowIngredients(ACTION_SHOW_NEXT_RECIPE, recipeId);
+                handleActionShowRecipeDataIntoTheWidget(ACTION_SHOW_NEXT_RECIPE, recipeId);
             } else if (ACTION_SHOW_PREVIOUS_RECIPE.equals(action)) {
                 recipeId = intent.getIntExtra("recipeId", 1);
-                handleActionShowIngredients(ACTION_SHOW_PREVIOUS_RECIPE, recipeId);
-
+                handleActionShowRecipeDataIntoTheWidget(ACTION_SHOW_PREVIOUS_RECIPE, recipeId);
 
             }
         }
     }
 
-    /**
-     * Handle action SHOW_INGREDIENTS in the provided background thread with the provided
-     * parameters.
-     */
-
-    private void handleActionShowIngredients(String action, int recipeId) {
+    private void handleActionShowRecipeDataIntoTheWidget(String action, int recipeId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
         String recipeName;
@@ -79,13 +65,13 @@ public class GetRecipeInformationService extends IntentService {
         String recipeThumbnail;
 
         Cursor cursor = getCursor(action, recipeId);
-        if (cursor != null) {
+        if (cursor != null&&cursor.getCount()>0) {
             cursor.moveToFirst();
             recipeName = cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_NAME));
             recipeIngredientsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_INGREDIENTS));
             recipeStepsNumber = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_STEPS));
             recipeId = cursor.getInt(cursor.getColumnIndex(Contracts.RecipesEntry._ID));
-            recipeThumbnail=cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL));
+            recipeThumbnail = cursor.getString(cursor.getColumnIndex(Contracts.RecipesEntry.COLUMN_RECIPE_THUMBNAIL));
             cursor.close();
 
             //update all widgets
@@ -95,12 +81,8 @@ public class GetRecipeInformationService extends IntentService {
                     recipeIngredientsNumber,
                     recipeStepsNumber,
                     recipeThumbnail);
-
         }
-
-
     }
-
 
     private Cursor getCursor(String action, int recipeId) {
         Cursor cursor;
@@ -110,7 +92,7 @@ public class GetRecipeInformationService extends IntentService {
                 null,
                 null,
                 Contracts.RecipesEntry.COLUMN_RECIPE_LAST_TIME_USED + " DESC ");
-        if(cursor!=null) cursorCount = cursor.getCount();
+        if (cursor != null) cursorCount = cursor.getCount();
         if (action != null && (action.equals(ACTION_SHOW_PREVIOUS_RECIPE) || action.equals(ACTION_SHOW_NEXT_RECIPE))) {
 
             if (action.equals(GetRecipeInformationService.ACTION_SHOW_NEXT_RECIPE)) {

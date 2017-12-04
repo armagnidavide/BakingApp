@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.adapters;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.Ingredient;
+import com.example.android.bakingapp.R;
+
 import java.util.List;
 
+/**
+ * The adapter used for the recyclerView inside IngredientFragment
+ */
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.CustomViewHolder> {
     private List<Ingredient> ingredientList;
 
@@ -19,7 +25,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ingredient_item, viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ingredient_item, viewGroup, false);
         return new CustomViewHolder(view);
     }
 
@@ -27,11 +33,8 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         Ingredient ingredient = ingredientList.get(i);
 
-        //Setting ingredient's name
         customViewHolder.txtVwIngredientName.setText(ingredient.getName());
-        //Setting ingredient's quantity
         customViewHolder.txtVwIngredientQuantity.setText(String.valueOf(ingredient.getQuantity()));
-        //Setting ingredient's measure
         customViewHolder.txtVwIngredientMeasure.setText(String.valueOf(ingredient.getMeasure()));
 
     }
@@ -49,9 +52,9 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         CustomViewHolder(View view) {
             super(view);
-            this.txtVwIngredientName = (TextView) view.findViewById(R.id.txtVw_ingredient_name);
-            this.txtVwIngredientQuantity = (TextView) view.findViewById(R.id.txtVw_ingredient_quantity);
-            this.txtVwIngredientMeasure = (TextView) view.findViewById(R.id.txtVw_recipe_ingredient_measure);
+            this.txtVwIngredientName = (TextView) view.findViewById(R.id.ingredientItem_txtVw_ingredient_name);
+            this.txtVwIngredientQuantity = (TextView) view.findViewById(R.id.ingredientItem_txtVw_ingredient_quantity);
+            this.txtVwIngredientMeasure = (TextView) view.findViewById(R.id.ingredientItem_txtVw_recipe_ingredient_measure);
 
         }
 

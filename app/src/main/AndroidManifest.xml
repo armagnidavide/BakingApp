@@ -15,45 +15,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SelectRecipeActivity">
+        <activity android:name=".activities.SelectRecipeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectStepActivity" />
-        <activity android:name=".StepDetailActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:noHistory="true"
-            />
+        <activity
+            android:name=".activities.SelectStepActivity"
+            android:launchMode="singleTop"
+          />
+        <activity
+            android:name=".activities.DetailsActivity" />
 
         <provider
             android:name=".sql.Provider"
             android:authorities="com.example.android.bakingapp"
             android:enabled="true"
             android:exported="true" />
-<!--The <receiver> element requires the android:name attribute, which specifies the AppWidgetProvider used by the App Widget-->
-        <receiver android:name=".RecipeWidgetProvider">
-            <!--The <intent-filter> element must include an <action> element with the android:name attribute.
+        <!-- The <receiver> element requires the android:name attribute, which specifies the AppWidgetProvider used by the App Widget -->
+        <receiver android:name=".widget.RecipeWidgetProvider">
+
+            <!--
+            The <intent-filter> element must include an <action> element with the android:name attribute.
             This attribute specifies that the AppWidgetProvider accepts the ACTION_APPWIDGET_UPDATE broadcast.
-             This is the only broadcast that you must explicitly declare-->
+             This is the only broadcast that you must explicitly declare
+            -->
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <!--The <meta-data> element specifies the AppWidgetProviderInfo resource-->
+            <!-- The <meta-data> element specifies the AppWidgetProviderInfo resource -->
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/recipe_widget_provider_info" />
         </receiver>
 
         <service
-            android:name=".GetRecipeInformationService"
+            android:name=".widget.GetRecipeInformationService"
             android:exported="false" />
         <service
-            android:name=".ListWidgetService"
+            android:name=".widget.ListWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
+        <activity android:name=".activities.FullScreenVideoActivity"></activity>
     </application>
 
 </manifest>

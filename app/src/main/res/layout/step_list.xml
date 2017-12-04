@@ -13,6 +13,6 @@
     android:layout_marginRight="16dp"
     android:layout_gravity="center"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.example.android.bakingapp.SelectStepActivity"
+    tools:context="com.example.android.bakingapp.activities.SelectStepActivity"
     tools:listitem="@layout/step_item" />
 </LinearLayout>

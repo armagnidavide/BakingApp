@@ -5,40 +5,40 @@
     android:layout_height="match_parent"
     android:background="@color/colorOrangeLight"
     android:orientation="vertical"
-    tools:context="com.example.android.bakingapp.StepDetailActivity">
+    tools:context="com.example.android.bakingapp.activities.DetailsActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout_btns_container"
+        android:id="@+id/detailsActivity_linearLayout_btns_container"
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_previous_step_detail_activity"
+            android:id="@+id/detailsActivity_btn_previous_step"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="8dp"
-            android:text="@string/step_detail_activity_btn_previous"
+            android:text="@string/activity_details_btn_previous"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/btn_next_step_detail_activity"
+            android:id="@+id/detailsActivity_btn_next_step"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="8dp"
-            android:text="@string/step_detail_activity_btn_next"
+            android:text="@string/activity_details_btn_next"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
     </LinearLayout>
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/item_detail_container"
+        android:id="@+id/detailsActivity_nestedScrollView_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="8dp"

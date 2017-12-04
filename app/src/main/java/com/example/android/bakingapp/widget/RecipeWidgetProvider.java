@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.activities.SelectStepActivity;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -22,26 +24,24 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     private static final String SHOW_NEXT = "showNext";
     private static final String SHOW_PREVIOUS = "showPrevious";
 
-    //helper method to create a PendingIntent
-    protected static PendingIntent getPendingSelfIntent(Context context, String action, int recipeId) {
-        Intent intent = new Intent(context, RecipeWidgetProvider.class);
-        intent.setAction(action);
-        intent.putExtra("recipeId", recipeId);
-        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    /**
+     * @param context The Context in which the receiver is running.
+     * @param intent  The Intent being received.
+     */
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        if (SHOW_NEXT.equals(intent.getAction())) {
+            GetRecipeInformationService.showRecipeDataIntoTheWidget
+                    (context, GetRecipeInformationService.ACTION_SHOW_NEXT_RECIPE, intent.getIntExtra("recipeId", 1));
+        } else if (SHOW_PREVIOUS.equals(intent.getAction())) {
+            GetRecipeInformationService.showRecipeDataIntoTheWidget
+                    (context, GetRecipeInformationService.ACTION_SHOW_PREVIOUS_RECIPE, intent.getIntExtra("recipeId", 1));
+        }
     }
 
-    private static PendingIntent getSelectStepActivityPendingIntent(Context context, int recipeId) {
-        Intent goToSelectStepActivityIntent = new Intent(context, SelectStepActivity.class);
-        goToSelectStepActivityIntent.setAction(SelectStepActivity.ACTION_GET_RECIPE_DATA_FROM_CURSOR);
-        goToSelectStepActivityIntent.putExtra(SelectStepActivity.RECIPE_ID, recipeId);
-        return PendingIntent.getActivity(
-                context,
-                0,
-                goToSelectStepActivityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
 
-    }
-
+    //Update the Widgets which ids are in appWidgetIds[].
     public static void updateRecipeWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds,
                                            int recipeId, String recipeName, int ingredientsNumber, int stepsNumber,
                                            String recipeThumbnail) {
@@ -50,16 +50,28 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             int width = options.getInt(appWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 
             RemoteViews rv;
-            if (width < 300) {
+            if (width < 200) {
                 rv = setSmallRemoteView(context, recipeId, recipeName, ingredientsNumber, stepsNumber, appWidgetIds, recipeThumbnail);
             } else {
                 rv = setListRemoteView(context, recipeId, recipeName, appWidgetIds, recipeThumbnail);
             }
-            //Instruct the widget manager to update the widget
+            //Set the RemoteViews to use for the specified appWidgetId.
             appWidgetManager.updateAppWidget(appWidgetId, rv);
         }
     }
 
+    /**
+     *
+     * Creates and return the RemoteViews for the Widget.
+     * @param context GetRecipeInformationService
+     * @param recipeId the id of the recipe
+     * @param recipeName the name of the recipe
+     * @param ingredientsNumber the number of ingredients
+     * @param stepsNumber the number of steps
+     * @param appWidgetIds the ids of the widgets
+     * @param recipeThumbnail the image of the recipe
+     * @return the RemoteViews for the widgets
+     */
     private static RemoteViews setSmallRemoteView(Context context, int recipeId, String recipeName, int ingredientsNumber,
                                                   int stepsNumber, int[] appWidgetIds, String recipeThumbnail) {
         // Construct the RemoteViews object
@@ -67,9 +79,9 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         views.setTextViewText(R.id.appwidget_recipe_name, recipeName);
         views.setTextViewText(R.id.appwidget_recipe_ingredients_number, String.valueOf(ingredientsNumber));
         views.setTextViewText(R.id.appwidget_recipe_steps_number, String.valueOf(stepsNumber));
-        views.setOnClickPendingIntent(R.id.btn_appwidget_next,
+        views.setOnClickPendingIntent(R.id.widget_small_btn_appwidget_next,
                 getPendingSelfIntent(context, SHOW_NEXT, recipeId));
-        views.setOnClickPendingIntent(R.id.btn_appwidget_previous,
+        views.setOnClickPendingIntent(R.id.widget_small_btn_appwidget_previous,
                 getPendingSelfIntent(context, SHOW_PREVIOUS, recipeId));
         // Load image for all appWidgetIds.
         //Render image using Picasso library
@@ -94,10 +106,14 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     }
 
     /**
-     * Creates and return the RemoteViews to be displayed in the ListView mode widget
-     *
-     * @param context The context
-     * @return the RemoteViews for the ListView mode widget
+     * Creates and return the RemoteViews for the Widget.
+     * The widget contains a List that displays  the ingredients of the recipes.
+     * @param context GetRecipeInformationService
+     * @param recipeId the id of the recipe
+     * @param recipeName the name of the recipe
+     * @param appWidgetIds the ids of the widgets
+     * @param recipeThumbnail the image of the recipe
+     * @return the RemoteViews for the widgets
      */
     private static RemoteViews setListRemoteView(Context context, int recipeId, String recipeName
             , int[] appWidgetIds, String recipeThumbnail) {
@@ -116,9 +132,9 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.lnrLyt_for_pendingIntent, goToSelectStepActivityPendingIntent);
         views.setPendingIntentTemplate(R.id.widget_list_view, goToSelectStepActivityPendingIntent);
         views.setTextViewText(R.id.appwidget_recipe_name, recipeName);
-        views.setOnClickPendingIntent(R.id.btn_appwidget_next,
+        views.setOnClickPendingIntent(R.id.widget_small_btn_appwidget_next,
                 getPendingSelfIntent(context, SHOW_NEXT, recipeId));
-        views.setOnClickPendingIntent(R.id.btn_appwidget_previous,
+        views.setOnClickPendingIntent(R.id.widget_small_btn_appwidget_previous,
                 getPendingSelfIntent(context, SHOW_PREVIOUS, recipeId));
         //set the ListWidgetService intent to act as the adapter for the ListView
         Intent intent = new Intent(context, ListWidgetService.class);
@@ -131,29 +147,18 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         return views;
     }
 
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        if (SHOW_NEXT.equals(intent.getAction())) {
-            GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_NEXT_RECIPE, intent.getIntExtra("recipeId", 1));
-        } else if (SHOW_PREVIOUS.equals(intent.getAction())) {
-            GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_PREVIOUS_RECIPE, intent.getIntExtra("recipeId", 1));
-        }
-    }
-
     //Called in response to the ACTION_APPWIDGET_OPTIONS_CHANGED broadcast when this widget has been layed out at a new size.
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
-        GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
+        GetRecipeInformationService.showRecipeDataIntoTheWidget(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
     }
 
     //Called in response to the ACTION_APPWIDGET_UPDATE and ACTION_APPWIDGET_RESTORED
     // broadcasts when this AppWidget provider is being asked to provide RemoteViews for a set of AppWidgets
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        GetRecipeInformationService.startActionShowIngredients(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
+        GetRecipeInformationService.showRecipeDataIntoTheWidget(context, GetRecipeInformationService.ACTION_SHOW_LAST_USED_RECIPE);
 
     }
 
@@ -165,6 +170,27 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    //helper method to create a PendingIntent that will be sent to RecipeWidgetProvider.class
+    protected static PendingIntent getPendingSelfIntent(Context context, String action, int recipeId) {
+        Intent intent = new Intent(context, RecipeWidgetProvider.class);
+        intent.setAction(action);
+        intent.putExtra("recipeId", recipeId);
+        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //helper method to create a PendingIntent that will start SelectStepActivity
+    private static PendingIntent getSelectStepActivityPendingIntent(Context context, int recipeId) {
+        Intent goToSelectStepActivityIntent = new Intent(context, SelectStepActivity.class);
+        goToSelectStepActivityIntent.setAction(SelectStepActivity.ACTION_GET_RECIPE_DATA_FROM_CURSOR);
+        goToSelectStepActivityIntent.putExtra(SelectStepActivity.RECIPE_ID, recipeId);
+        return PendingIntent.getActivity(
+                context,
+                0,
+                goToSelectStepActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
     }
 
 

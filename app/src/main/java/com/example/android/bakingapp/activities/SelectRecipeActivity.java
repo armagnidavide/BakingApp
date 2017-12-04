@@ -1,22 +1,29 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.activities;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.android.bakingapp.databinding.ActivitySelectRecipeBinding;
+import com.example.android.bakingapp.Ingredient;
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.Recipe;
+import com.example.android.bakingapp.Step;
+import com.example.android.bakingapp.adapters.RecipesAdapter;
 import com.example.android.bakingapp.sql.Contracts;
 
 import org.json.JSONArray;
@@ -30,35 +37,72 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * In this Activity a List or Grid(depending on the width of the screen)
+ * of recipes is shown to the user.
+ * If the user selects one SelectStepActivity is opened with the details.
+ */
 public class SelectRecipeActivity extends AppCompatActivity {
 
 
-    private static final String TAG = "RecyclerViewExample";
+    //tag used for the Logcat
+    private static final String TAG = SelectRecipeActivity.class.getSimpleName();
+    //the Url where the app finds the recipes
     private static final String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
-    ActivitySelectRecipeBinding binding;
+    //the List contains all the recipes
     private List<Recipe> recipes;
+    //recyclerView and Adapter used to display the recipes
+    private RecyclerView recyclerView;
     private RecipesAdapter adapter;
+    //progressBar appears while the recipes data is not ready yet.
+    private ProgressBar progressBar;
+    //The View shown when there is no data available for the RecyclerView
+    LinearLayout emptyView;
+    //the button inside emptyView
+    Button btnEmptyView;
 
-    public static Uri insert(ContentResolver resolver,
-                             Uri uri, ContentValues values) {
+    /**
+     * Inserts data into the Db
+     *
+     * @param resolver the ContentResolvr
+     * @param uri      the Uri
+     * @param values   the Values to insert
+     */
+    public static void insert(ContentResolver resolver,
+                              Uri uri, ContentValues values) {
         try {
-            return resolver.insert(uri, values);
+            resolver.insert(uri, values);
         } catch (SQLiteException e) {
             Log.e(TAG, "Catch a SQLiteException when insert: ", e);
-            return null;
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_select_recipe);
-        setLayoutManager();
+        setContentView(R.layout.activity_select_recipe);
+        initializations();
+        setRecyclerView();
+        setClickListener();
+    }
+
+
+    /**
+     * Initializes what we need from the beginning
+     */
+    private void initializations() {
+        recyclerView = (RecyclerView) findViewById(R.id.selectRecipeActivity_recyclerView_recipes);
         adapter = new RecipesAdapter(SelectRecipeActivity.this, null);
-        binding.recyclerView.setAdapter(adapter);
+        progressBar = (ProgressBar) findViewById(R.id.selectRecipeActivity_progressBar);
+        emptyView=(LinearLayout)findViewById(R.id.selectRecipeActivity_linearLayout_empty_view);
+        btnEmptyView=(Button)findViewById(R.id.selectRecipeActivity_btn_tryAgain);
 
     }
 
+    /**
+     * If the recipes are not in the Db the DownloadTask is executed,
+     * otherwise displayRecipeFromDb() is called.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -69,45 +113,64 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
+    private void setRecyclerView() {
+        setLayoutManager();
+        recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * Set the LayoutManager as a GridLayoutManager if the configuration is XLARGE,
+     * otherwise as a LinearLayoutManager.
+     */
     private void setLayoutManager() {
         int screenSize = getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK;
         switch (screenSize) {
             case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-                binding.recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
                 break;
             default:
-                binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
     }
 
+    private void setClickListener() {
+        btnEmptyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DownloadTask().execute(RECIPE_URL);
+            }
+        });
+    }
+
+    /**
+     * Checks if there are already recipes inside the Db
+     *
+     * @return true if the recipes are already inside the Db
+     */
     private boolean databaseContainsData() {
-        boolean containsRecipes;
+        boolean dbContainsRecipesAlready = false;
         Cursor cursor = getApplicationContext().getContentResolver()
                 .query(Contracts.RecipesEntry.CONTENT_URI,
                         null,
                         null,
                         null,
                         null);
-        containsRecipes = cursor.getCount() > 0;
-        cursor.close();
-        return containsRecipes;
+        if (cursor != null) {
+            dbContainsRecipesAlready = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return dbContainsRecipesAlready;
     }
 
-
     /**
-     * private static boolean doesDatabaseExist(Context context, String dbName) {
-     * File dbFile = context.getDatabasePath(dbName);
-     * return dbFile.exists();}
-     **/
-
-
-    private void parseResult(String result) {
-        Log.d(TAG, "PARSE RESULT");
+     * Parse the JsonResponse and extract all the recipes from it and put them inside a List ( recipes ).
+     *
+     * @param JsonResult the JsonResponse from the Network
+     */
+    private void parseResult(String JsonResult) {
         try {
-            //JSONObject response = new JSONObject(result);
-            JSONArray response = new JSONArray(result);
-            //JSONArray recipes = response.optJSONArray("reci");
+            JSONArray response = new JSONArray(JsonResult);
             recipes = new ArrayList<>();
 
             for (int i = 0; i < response.length(); i++) {
@@ -133,10 +196,21 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get the currentTime .
+     *
+     * @return the currentTime
+     */
     private long getCurrentTime() {
         return System.currentTimeMillis();
     }
 
+    /**
+     * Create an ArrayList of ingredients from a JsonArray
+     *
+     * @param ingredients the JsonArray
+     * @return the ArrayList of ingredients
+     */
     private ArrayList<Ingredient> createIngredientsArrayList(JSONArray ingredients) {
         ArrayList<Ingredient> recipeIngredients = new ArrayList<>();
         try {
@@ -148,15 +222,19 @@ public class SelectRecipeActivity extends AppCompatActivity {
                 recipeIngredient.setName(ingredient.optString("ingredient"));
                 recipeIngredients.add(recipeIngredient);
             }
-            Log.d(TAG, "yes createIngredientRecipes");
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d(TAG, "no createIngredientRecipe");
         }
         return recipeIngredients;
     }
 
+    /**
+     * Creates an ArrayList of Steps from a JsonArray
+     *
+     * @param steps the JsonArray
+     * @return the ArrayList of steps
+     */
     private ArrayList<Step> createRecipeStepsArrayList(JSONArray steps) {
         ArrayList<Step> recipeSteps = new ArrayList<>();
         try {
@@ -170,20 +248,20 @@ public class SelectRecipeActivity extends AppCompatActivity {
                 recipeStep.setThumbnailURL(step.getString("thumbnailURL"));
                 recipeSteps.add(recipeStep);
             }
-            Log.d(TAG, "yes createStepsRecipe");
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d(TAG, "no createStepRecipes");
         }
-        Log.e(TAG, "recipe steps  are : " + recipeSteps.size() + "");
         return recipeSteps;
     }
 
-    private void putRecipesIntoDb() {
+    /**
+     * Inserts an ArrayList of Recipes inside the Db.
+     */
+    private void insertRecipesIntoDb() {
         for (int i = 0; i < recipes.size(); i++) {
-            insertIngredients(recipes.get(i).getIngredients(), recipes.get(i).getId());
-            insertSteps(recipes.get(i).getSteps(), recipes.get(i).getId());
+            insertIngredientsIntoDb(recipes.get(i).getIngredients(), recipes.get(i).getId());
+            insertStepsIntoDb(recipes.get(i).getSteps(), recipes.get(i).getId());
             ContentValues cv = new ContentValues();
             cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_NAME, recipes.get(i).getName());
             cv.put(Contracts.RecipesEntry.COLUMN_RECIPE_INGREDIENTS, recipes.get(i).getIngredientsNumber());
@@ -196,7 +274,10 @@ public class SelectRecipeActivity extends AppCompatActivity {
 
     }
 
-    private void insertIngredients(ArrayList<Ingredient> ingredients, int recipeId) {
+    /**
+     * Inserts an ArrayList of Ingredients inside the Db.
+     */
+    private void insertIngredientsIntoDb(ArrayList<Ingredient> ingredients, int recipeId) {
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient currentIngredient = ingredients.get(i);
             ContentValues cv = new ContentValues();
@@ -209,7 +290,10 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void insertSteps(ArrayList<Step> steps, int recipeId) {
+    /**
+     * Inserts an ArrayList of Steps inside the Db.
+     */
+    private void insertStepsIntoDb(ArrayList<Step> steps, int recipeId) {
         for (int i = 0; i < steps.size(); i++) {
             Step currentStep = steps.get(i);
             ContentValues cv = new ContentValues();
@@ -222,8 +306,11 @@ public class SelectRecipeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retrieves the recipes from the Db and put them inside an ArrayList
+     */
     private void displayRecipesFromDb() {
-        recipes = new ArrayList<Recipe>();
+        recipes = new ArrayList<>();
         Cursor cursor = getApplicationContext().getContentResolver()
                 .query(Contracts.RecipesEntry.CONTENT_URI,
                         null,
@@ -231,6 +318,7 @@ public class SelectRecipeActivity extends AppCompatActivity {
                         null,
                         null);
         if (cursor != null && cursor.getCount() > 0) {
+            showLayoutForTheData();
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 Recipe recipe = new Recipe();
@@ -253,17 +341,23 @@ public class SelectRecipeActivity extends AppCompatActivity {
             }
             cursor.close();
             adapter = new RecipesAdapter(SelectRecipeActivity.this, recipes);
-            binding.progressBar.setVisibility(View.INVISIBLE);
-            binding.recyclerView.setAdapter(adapter);
+            progressBar.setVisibility(View.INVISIBLE);
+            recyclerView.setAdapter(adapter);
+        }else{
+            showEmptyView();
         }
 
     }
 
+    /**
+     * This AsyncTask retrieves recipes data from the Network
+     */
     public class DownloadTask extends AsyncTask<String, Void, Integer> {
 
         @Override
         protected void onPreExecute() {
-            binding.progressBar.setVisibility(View.VISIBLE);
+            //A progressBar is shown while the data cannot be shown to the User
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -284,28 +378,40 @@ public class SelectRecipeActivity extends AppCompatActivity {
                         response.append(line);
                     }
                     parseResult(response.toString());
-                    result = 1; // Successful
+                    result = 1;
                 } else {
-                    result = 0; //"Failed to fetch data!";
+                    result = 0;
                 }
             } catch (Exception e) {
-                Log.d(TAG, e.getLocalizedMessage());
+                Log.e(TAG, e.getLocalizedMessage());
             }
-            return result; //"Failed to fetch data!";
+            return result;
         }
 
         @Override
         protected void onPostExecute(Integer result) {
-            binding.progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
 
             if (result == 1) {
-                putRecipesIntoDb();
+                showLayoutForTheData();
+                insertRecipesIntoDb();
                 adapter = new RecipesAdapter(SelectRecipeActivity.this, recipes);
-                binding.recyclerView.setAdapter(adapter);
+                recyclerView.setAdapter(adapter);
             } else {
-                Toast.makeText(SelectRecipeActivity.this, "Failed to fetch data!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SelectRecipeActivity.this, R.string.activity_select_recipe_toast_failed_to_fetch_data, Toast.LENGTH_SHORT).show();
+                showEmptyView();
             }
         }
+    }
+
+    public void showLayoutForTheData(){
+        recyclerView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
+    }
+    public void showEmptyView(){
+        recyclerView.setVisibility(View.GONE);
+        LinearLayout emptyView=(LinearLayout)findViewById(R.id.selectRecipeActivity_linearLayout_empty_view);
+        emptyView.setVisibility(View.VISIBLE);
     }
 
 

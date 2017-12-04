@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.adapters;
 
 
 import android.content.Context;
@@ -11,10 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.Recipe;
+import com.example.android.bakingapp.activities.SelectStepActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+/**
+ * The Adapter used for the RecyclerView in SelectRecipeActivity.
+ */
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.CustomViewHolder> {
     private List<Recipe> recipeList;
     private Context mContext;
@@ -70,13 +76,15 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.CustomVi
             super(view);
             view.setOnClickListener(this);
             this.imgVwRecipeImage = (ImageView) view.findViewById(R.id.imgVw_recipe_image);
-            this.txtVwRecipeName = (TextView) view.findViewById(R.id.txtVw_recipe_name);
+            this.txtVwRecipeName = (TextView) view.findViewById(R.id.recipeItem_txtVw_recipe_name);
             this.txtVwRecipeIngredientsNumber = (TextView) view.findViewById(R.id.txtVw_recipe_ingredients_number);
             this.txtVwRecipeStepsNumber = (TextView) view.findViewById(R.id.txtVw_recipe_steps_number);
-            this.txtVwRecipeServing = (TextView) view.findViewById(R.id.txtVw_recipe_serving);
+            this.txtVwRecipeServing = (TextView) view.findViewById(R.id.selectStepActivity_txtVw_recipe_serving);
 
         }
-
+        /**
+         * When the user clicks a recipe, SelectRecipeActivity is opened
+         */
         @Override
         public void onClick(View view) {
             Recipe recipe = recipeList.get(getAdapterPosition());
@@ -86,7 +94,6 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.CustomVi
             intent.putExtra(SelectStepActivity.RECIPE_NAME, recipe.getName());
             intent.putExtra(SelectStepActivity.RECIPE_SERVING, recipe.getServings());
             intent.putExtra(SelectStepActivity.RECIPE_LAST_TIME_USED, recipe.getLastTimeUsed());
-
             mContext.startActivity(intent);
         }
     }

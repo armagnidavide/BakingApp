@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.fragments;
 
 
 import android.content.ContentUris;
@@ -13,38 +13,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.bakingapp.Ingredient;
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.adapters.IngredientsAdapter;
 import com.example.android.bakingapp.sql.Contracts;
 
 import java.util.ArrayList;
 
 public class IngredientsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    //constant to retrieve the recipeId from the bundle
     public static final String INGREDIENT_RECIPE_ID = "recipe_id";
-    private static final int LOADER_INGREDIENTS = 2;
+    //loader Id
+    private static final int LOADER_INGREDIENTS = 10;
+    //recyclerView to display the ingredients
     private RecyclerView ingredientRecyclerView;
+
+
     private int recipeId;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public IngredientsFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
         getDataFromBundle(arguments);
-
-    }
-
-    private void takeIngredientsFromDb() {
-        startIngredientsLoader();
-    }
-
-    private void startIngredientsLoader() {
-        getActivity().getSupportLoaderManager().initLoader(LOADER_INGREDIENTS, null, this);
     }
 
     private void getDataFromBundle(Bundle arguments) {
@@ -52,7 +45,6 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
             recipeId = arguments.getInt(INGREDIENT_RECIPE_ID);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,10 +54,14 @@ public class IngredientsFragment extends Fragment implements LoaderManager.Loade
         takeIngredientsFromDb();
         return rootView;
     }
-
     private void initializations(View rootView) {
-        ingredientRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view_ingredients);
+        ingredientRecyclerView = (RecyclerView) rootView.findViewById(R.id.ingredientsFragment_recyclerView_ingredients);
     }
+
+    private void takeIngredientsFromDb() {
+        getActivity().getSupportLoaderManager().initLoader(LOADER_INGREDIENTS, null, this);
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

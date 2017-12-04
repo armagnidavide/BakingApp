@@ -14,7 +14,7 @@
         android:background="@color/colorYellowLight">
         <!--This TextView contains the name of the recipe-->
         <TextView
-            android:id="@+id/txtVw_recipe_name"
+            android:id="@+id/recipeItem_txtVw_recipe_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -29,7 +29,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtVw_recipe_name"
+            android:layout_below="@id/recipeItem_txtVw_recipe_name"
             android:orientation="horizontal">
             <!--This ImageView contains an illustration of the recipe or a placeholder-->
             <ImageView
@@ -37,7 +37,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_margin="8dp"
-                android:contentDescription="@string/recipe_image"
+                android:contentDescription="@string/item_recipe_content_description_recipe_image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/recipe_placeholder" />
 
@@ -58,13 +58,13 @@
                         android:layout_gravity="start"
                         android:layout_margin="8dp"
                         android:gravity="center"
-                        android:text="@string/selectrecipe_activity_servings_label"
+                        android:text="@string/item_recipe_servings_label"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
                     <!--This TextView contains the serving of the recipe-->
                     <TextView
-                        android:id="@+id/txtVw_recipe_serving"
+                        android:id="@+id/selectStepActivity_txtVw_recipe_serving"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
@@ -85,7 +85,7 @@
                         android:layout_gravity="start"
                         android:layout_margin="8dp"
                         android:gravity="center"
-                        android:text="@string/select_recipe_activity_steps_label"
+                        android:text="@string/item_recipe_steps_label"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
 
@@ -112,7 +112,7 @@
                         android:layout_gravity="start"
                         android:layout_margin="8dp"
                         android:gravity="center"
-                        android:text="@string/select_recipe_activity_ingredients_label"
+                        android:text="@string/item_recipe_ingredients_label"
                         android:textColor="@android:color/black"
                         android:textSize="16sp" />
                     <!--This TextView contains the number of ingredients for the recipe.-->

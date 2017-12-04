@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorOrangeLight"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txtVw_recipe_name"
+            android:id="@+id/selectStepActivity_txtVw_recipe_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -29,12 +29,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:text="@string/select_step_activity_servings_label"
+                android:text="@string/activity_select_step_label_servings"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/txtVw_recipe_serving"
+                android:id="@+id/selectStepActivity_txtVw_recipe_serving"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -45,17 +45,17 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_show_ingredients"
+            android:id="@+id/selectStepActivity_btn_show_ingredients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:background="@color/colorPrimaryDark"
             android:onClick="displayIngredients"
-            android:text="@string/activity_select_recipe_step_btn_show_ingredients"
+            android:text="@string/activity_select_step_btn_show_ingredients"
             android:textColor="@color/colorYellowLight" />
         <!--This Frame layout contains @layout:step_list that changes in function of the width of the screen  -->
         <FrameLayout
-            android:id="@+id/frameLayout"
+            android:id="@+id/selectStepActivity_frameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -64,4 +64,3 @@
             <include layout="@layout/step_list" />
         </FrameLayout>
     </LinearLayout>
-</layout>

@@ -1,27 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/activity_select_recipe"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
         android:background="@color/colorOrangeLight"
-        tools:context="com.example.android.bakingapp.SelectRecipeActivity">
+        tools:context="com.example.android.bakingapp.activities.SelectRecipeActivity">
         <!--This RecyclerView contains a list of Recipes-->
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/selectRecipeActivity_recyclerView_recipes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
         <!--This Progressbar is shown till the RecyclerView has all the data-->
         <ProgressBar
-            android:id="@+id/progress_bar"
+            android:id="@+id/selectRecipeActivity_progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
+    <!--The empty view in case there is a problem with the data for the RecyclerView-->
+    <LinearLayout
+        android:id="@+id/selectRecipeActivity_linearLayout_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorOrangeLight"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/activity_select_recipe_emptyview_message"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
+        <Button
+            android:id="@+id/selectRecipeActivity_btn_tryAgain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_select_recipe_btn_tryagain"/>
+    </LinearLayout>
 
     </RelativeLayout>
-</layout>

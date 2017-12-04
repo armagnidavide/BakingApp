@@ -1,32 +1,58 @@
 <resources>
+    <!--APP-->
     <string name="app_name">BakingApp</string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
-    <string name="recipe_image">image of the recipe</string>
-    <string name="ingredients">btn_ingredients</string>
-    <string name="appwidget_title">BAKING APP</string>
-    <string name="add_widget">Add widget</string>
-    <string name="ingredient_name_label">name</string>
-    <string name="ingredient_quantity_label">quantity</string>
-    <string name="ingredient_measure_label">measure</string>
-    <string name="appwidget_recipe_label">Recipe :</string>
-    <string name="appwidget_ingredients_number_label">Ingredients :</string>
-    <string name="appwidget_steps_number_label">Steps :</string>
-    <string name="btn_appwidget_previous">previous</string>
-    <string name="btn_appwidget_next">next</string>
-    <string name="appwidget_small_image_content_description">recipe image</string>
-    <string name="appwidget_grid_ingredients_not_available">Ingredients not available</string>
-    <string name="appwidget_grid_recipe_image">recipe image</string>
-    <string name="content_description_step_image">content_description_step_image</string>
-    <string name="appwidget_recipe_image_content_description">recipe image</string>
-    <string name="select_step_activity_servings_label">Servings :</string>
-    <string name="selectrecipe_activity_servings_label">Servings :</string>
-    <string name="select_recipe_activity_steps_label">Steps :</string>
-    <string name="select_recipe_activity_ingredients_label">Ingredients :</string>
-    <string name="activity_select_recipe_step_btn_show_ingredients">Show Ingredients</string>
-    <string name="ingredient_item_ingredient_name_label">Name :</string>
-    <string name="ingredient_item_quantity_label">Quantity :</string>
-    <string name="ingredient_item_measure_label">Measure :</string>
-    <string name="step_detail_activity_btn_next">Next</string>
-    <string name="step_detail_activity_btn_previous">Previous</string>
+
+    <!--WIDGET-->
+    <string name="widget_btn_previous">previous</string>
+    <string name="widget_btn_next">next</string>
+    <string name="widget_message_ingredients_not_available">Ingredients not available</string>
+    <string name="widget_content_description_recipe_image">recipe image</string>
+
+    <!--WIDGET ITEM INGREDIENT-->
+    <string name="widget_item_ingredient_name_label">name</string>
+    <string name="widget_item_ingredient_quantity_label">quantity</string>
+    <string name="widget_item_ingredient_measure_label">measure</string>
+
+    <!--WIDGET SMALL-->
+    <string name="widget_small_label_recipe">Recipe :</string>
+    <string name="widget_small_label_ingredients_number">Ingredients :</string>
+    <string name="widget_small_label_steps_number">Steps :</string>
+    <string name="widget_small_content_description_recipe_image">recipe image</string>
+
+    <!--WIDGET EMPTY VIEW-->
+    <string name="widget_empty_view_content_description_recipe_image">recipe image</string>
+
+    <!--ITEM STEP-->
+    <string name="item_step_content_description_step_image">content_description_step_image</string>
+
+    <!--ITEM RECIPE-->
+    <string name="item_recipe_servings_label">Servings :</string>
+    <string name="item_recipe_steps_label">Steps :</string>
+    <string name="item_recipe_ingredients_label">Ingredients :</string>
+    <string name="item_recipe_content_description_recipe_image">image of the recipe</string>
+
+    <!--ITEM INGREDIENT-->
+    <string name="item_ingredient_name_label">Name :</string>
+    <string name="item_ingredient_quantity_label">Quantity :</string>
+    <string name="item_ingredient_measure_label">Measure :</string>
+
+    <!--ACTIVITY SELECT_STEP-->
+    <string name="activity_select_step_label_servings">Servings :</string>
+    <string name="activity_select_step_btn_show_ingredients">Show Ingredients</string>
+
+    <!--ACTIVITY STEP_DETAIL-->
+    <string name="activity_details_btn_next">Next</string>
+    <string name="activity_details_btn_previous">Previous</string>
+
+    <!--ACTIVITY SELECT_RECIPE-->
+    <string name="activity_select_recipe_toast_failed_to_fetch_data">Failed to fetch data! Check your internet connection</string>
+    <string name="activity_select_recipe_emptyview_message">Recipes not available, check your internet connection</string>
+    <string name="activity_select_recipe_btn_tryagain">Try Again</string>
+
+    <!--FRAGMENTS-->
+    <string name="fragment_step_detail_content_description_step_image">step image</string>
+    <string name="fragment_step_detail_btn_fullscreen">Full Screen</string>
+    <string name="menu_catalog">catalog</string>
+
+
 </resources>

@@ -22,11 +22,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ingredient_item_ingredient_name_label"
+            android:text="@string/item_ingredient_name_label"
             android:textSize="14sp" />
         <!--This TextView contains the name of the ingredient-->
         <TextView
-            android:id="@+id/txtVw_ingredient_name"
+            android:id="@+id/ingredientItem_txtVw_ingredient_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimaryDark"
@@ -43,11 +43,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ingredient_item_quantity_label"
+            android:text="@string/item_ingredient_quantity_label"
             android:textSize="14sp" />
         <!--This TextView contains the quantity -->
         <TextView
-            android:id="@+id/txtVw_ingredient_quantity"
+            android:id="@+id/ingredientItem_txtVw_ingredient_quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimaryDark"
@@ -65,11 +65,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ingredient_item_measure_label"
+            android:text="@string/item_ingredient_measure_label"
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/txtVw_recipe_ingredient_measure"
+            android:id="@+id/ingredientItem_txtVw_recipe_ingredient_measure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimaryDark"

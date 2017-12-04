@@ -12,21 +12,21 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_appwidget_previous"
+            android:id="@+id/widget_small_btn_appwidget_previous"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/btn_appwidget_previous"
+            android:text="@string/widget_btn_previous"
             android:textColor="@color/colorPrimaryDark" />
 
         <Button
-            android:id="@+id/btn_appwidget_next"
+            android:id="@+id/widget_small_btn_appwidget_next"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/btn_appwidget_next"
+            android:text="@string/widget_btn_next"
             android:textColor="@color/colorPrimaryDark" />
 
     </LinearLayout>
@@ -64,7 +64,7 @@
                 android:layout_margin="8dp"
                 android:layout_marginStart="64dp"
                 android:layout_toEndOf="@+id/appwidget_recipe_name"
-                android:contentDescription="@string/appwidget_recipe_image_content_description" />
+                android:contentDescription="@string/widget_content_description_recipe_image" />
         </RelativeLayout>
 
         <ListView
@@ -77,27 +77,17 @@
             android:id="@+id/empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#09C"
+            android:background="@color/colorOrangeLight"
             android:orientation="vertical"
-            android:padding="@dimen/widget_margin">
-
+            android:padding="8dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:background="#09C"
-                android:text="@string/appwidget_grid_ingredients_not_available"
-                android:textColor="#ffffff"
-                android:textSize="24sp"
+                android:layout_gravity="center"
+                android:text="@string/widget_message_ingredients_not_available"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
                 android:textStyle="bold|italic" />
-
-            <ImageView
-                android:id="@+id/widget_recipe_placeholder_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:contentDescription="@string/appwidget_grid_recipe_image"
-                android:src="@drawable/recipe_placeholder" />
         </LinearLayout>
     </LinearLayout>
 
